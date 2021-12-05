@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Morse Code Encode and Decode</title>
+    <script src="./morse-decoder/morse-decoder.js"></script>
+</head>
+
+<body style="margin: 0; padding: 20px;">
+    <table class="cn" id="tb">
+        <tr>
+            <td><span>abc</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp0" placeholder="input" oninput="rinp();"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td><span>.-</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp1" oninput="inp(0);" /></textarea></td>
+        </tr>
+        <tr>
+            <td><span>._</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp2" oninput="inp(1);" /></textarea></td>
+        </tr>
+        <tr>
+            <td><span>•−</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp3" oninput="inp(2);" /></textarea></td>
+        </tr>
+        <tr>
+            <td><span>01</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp4" oninput="inp(3);" /></textarea></td>
+        </tr>
+        <tr>
+            <td><span>oi</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp5" oninput="inp(4);" /></textarea></td>
+        </tr>
+        <tr>
+            <td><span>+-</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp6" oninput="inp(5);" /></textarea></td>
+        </tr>
+        <tr>
+            <td><span>*-</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp7" oninput="inp(6);" /></textarea></td>
+        </tr>
+        <tr>
+            <td><span>.,</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp8" oninput="inp(7);" /></textarea></td>
+        </tr>
+    </table>
+    <div class="cn">
+        <span>add:</span>
+        <label><b>dot:</b> <input type="text" maxlength="1" class="inputad" id="addo" /></label>
+        <label><b>dash:</b> <input type="text" maxlength="1" class="inputad" id="addi" /></label>
+        <input type="button" value="add" style="padding: 8px;"
+            onclick="addR(document.getElementById('addo'), document.getElementById('addi'));" />
+        <span>lang:</span>
+        <select style="padding: 8px;" onchange="setLang(this.value || this.options[this.selectedIndex].value);">
+            <option value="1">Latin</option>
+            <option value="4">Latin Extended</option>
+            <option value="5">Cyrillic</option>
+            <option value="6">Greek</option>
+            <option value="7">Hebrew</option>
+            <option value="8">Arabic</option>
+            <option value="9">Persian</option>
+            <option value="10">Japanese</option>
+            <option value="11">Korean</option>
+            <option value="12">Thai</option>
+        </select>
+    </div>
+    <noscript>You should enable JavaScript</noscript>
+    <script>
+        var morseEncode = {};
+        var morseDecode = { m: {}, o: {} };
+        var inp0;
+        var inps = [];
+
+        function convert(value, inpO, inpI, vO, vI) {
+            var output = "";
+            for (var i = 0; i < value.length; i++) {
+                var c = value.charAt(i);
+                if (c === vO) {
+                    output += inpO;
+                } else if (c === vI) {
+                    output += inpI;
+                } else if (c === " ") {
+                    output += " ";
+                } else if (c === "/") {
+                    output += "/";
+                } else {
+                    throw new Error("Illegal symbol: " + c);
+                }
+            }
+            return output;
+        }
+
+        function encode(value) {
+            if (value.length == 0) {
+                return { value: "", o: "0", i: "1" };
+            }
+            var output = "";
+            for (var i = 0; i < value.length; i++) {
+                var ch = value.charAt(i);
+                if (ch === " ") {
+                    output += "/ ";
+                    continue;
+                } else if (ch === "\n" || ch === "\r" || ch === "\t") {
+                    output += "/ ";
+                    continue;
+                }
+                var c = morseEncode[ch];
+                if (c == undefined) {
+                    throw new Error("Illegal symbol: " + value.charAt(i));
+                }
+                output += c + " ";
+            }
+            return { value: output.substring(0, output.length - 1), o: "0", i: "1" };
+        }
+
+        function decode(value) {
+            if (value.length == 0) {
+                return [];
+            }
+            var output = [];
+            var sn = value.split(" / ");
+            for (var i = 0; i < sn.length; i++) {
+                var sni = sn[i].split(" ");
+                for (var j = 0; j < sni.length; j++) {
+                    var wr = sni[j];
+                    var c = morseDecode.m[wr];
+                    if (c == undefined) {
+                        c = morseDecode.o[wr];
+                        if (c == undefined) {
+                            if (wr.length > 0) {
+                                output.push("#");
+                            }
+                        } else {
+                            output.push(c);
+                        }
+                    } else {
+                        output.push(c);
+                    }
+                }
+                output.push(" ");
+            }
+            output.pop();
+            return output;
+        }
+
+        function rinp() {
+            try {
+                var m = encode(inp0.e.value.toLocaleUpperCase());
+                for (var i = 0; i < inps.length; i++) {
+                    var ip = inps[i];
+                    ip.e.value = convert(m.value, ip.o, ip.i, m.o, m.i);
+                }
+            } catch (err) {
+                for (var i = 0; i < inps.length; i++) {
+                    var ip = inps[i];
+                    ip.e.value = err;
+                }
+            }
+        }
+
+        function inp(ie) {
+            var e = inps[ie];
+            try {
+                inp0.e.value = decode(convert(e.e.value, "0", "1", e.o, e.i)).join("").toLocaleLowerCase();
+                for (var i = 0; i < inps.length; i++) {
+                    var ip = inps[i];
+                    if (ip.o === e.o && ip.i === e.i) {
+                        continue;
+                    }
+                    ip.e.value = convert(e.e.value, ip.o, ip.i, e.o, e.i);
+                }
+            } catch (err) {
+                inp0.e.value = err;
+                for (var i = 0; i < inps.length; i++) {
+                    var ip = inps[i];
+                    if (ip.o === e.o && ip.i === e.i) {
+                        continue;
+                    }
+                    ip.e.value = err;
+                }
+            }
+        }
+
+        function addMorse(cks, md) {
+            var keys = Object.keys(cks);
+            for (var j = keys.length - 1; j >= 0; j--) {
+                var msc = cks[keys[j]];
+                morseEncode[keys[j]] = msc;
+                md[msc] = keys[j];
+            }
+        }
+
+        function setLang(o) {
+            morseEncode = {};
+            var keys = Object.keys(characters);
+            for (var i = keys.length - 1; i >= 0; i--) {
+                var cks = characters[keys[i]];
+                if (keys[i] === o) {
+                    addMorse(cks, morseDecode.m);
+                } else {
+                    addMorse(cks, morseDecode.o);
+                }
+            }
+        }
+
+        function addR(io, ii) {
+            var iov = io.value;
+            var iiv = ii.value;
+            if (iov.length != 1) {
+                io.focus();
+                return;
+            }
+            if (iiv.length != 1) {
+                ii.focus();
+                return;
+            }
+            var row = document.getElementById("tb").insertRow();
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            cell1.innerHTML = "<span>" + iov + iiv + "</span>";
+            cell2.classList.add("w100");
+            var il = inps.length;
+            cell2.innerHTML = "<textarea rows=\"5\" class=\"w100\" id=\"inp" + (il + 1) + "\" oninput=\"inp(" + il + ");\" /></textarea>";
+            inps.push({ e: document.getElementById("inp" + (il + 1)), o: iov, i: iiv });
+        }
+
+        window.onload = function () {
+            inp0 = { e: document.getElementById("inp0") };
+            inps.push({ e: document.getElementById("inp1"), o: '.', i: '-' });
+            inps.push({ e: document.getElementById("inp2"), o: '.', i: '_' });
+            inps.push({ e: document.getElementById("inp3"), o: '•', i: '−' });
+            inps.push({ e: document.getElementById("inp4"), o: '0', i: '1' });
+            inps.push({ e: document.getElementById("inp5"), o: 'o', i: 'i' });
+            inps.push({ e: document.getElementById("inp6"), o: '+', i: '-' });
+            inps.push({ e: document.getElementById("inp7"), o: '*', i: '-' });
+            inps.push({ e: document.getElementById("inp8"), o: '.', i: ',' });
+
+            setLang('1');
+        }
+    </script>
+    <style>
+        .cn {
+            margin: auto;
+            max-width: 1024px;
+        }
+
+        .w100 {
+            width: 100%;
+        }
+
+        .inputad {
+            padding: 8px;
+            width: 28px;
+        }
+
+        span {
+            font-weight: bold;
+            margin-right: 4px;
+        }
+    </style>
+</body>
+
+</html>
