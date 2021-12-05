@@ -6,7 +6,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Morse Code Encode and Decode</title>
+
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Salif Mehmed" />
+    <meta property="og:title" content="Morse Code Encode and Decode" />
+    <meta property="og:description" content="Morse Code Encode and Decode Web Tool" />
+    <meta name="twitter:title" content="Morse Code Encode and Decode" />
+    <meta name="twitter:description" content="Morse Code Encode and Decode Web Tool" />
+
     <script src="./morse-decoder/morse-decoder.js"></script>
+    <style>
+        .cn {
+            margin: auto;
+            max-width: 1024px;
+        }
+
+        .w100 {
+            width: 100%;
+        }
+
+        span {
+            font-weight: bold;
+            margin-right: 4px;
+        }
+    </style>
 </head>
 
 <body style="margin: 0; padding: 20px;">
@@ -18,41 +41,41 @@
         </tr>
         <tr>
             <td><span>.-</span></td>
-            <td class="w100"><textarea rows="5" class="w100" id="inp1" oninput="inp(0);" /></textarea></td>
-        </tr>
-        <tr>
-            <td><span>._</span></td>
-            <td class="w100"><textarea rows="5" class="w100" id="inp2" oninput="inp(1);" /></textarea></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp1" oninput="inp(0);"></textarea></td>
         </tr>
         <tr>
             <td><span>•−</span></td>
-            <td class="w100"><textarea rows="5" class="w100" id="inp3" oninput="inp(2);" /></textarea></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp3" oninput="inp(2);"></textarea></td>
         </tr>
         <tr>
             <td><span>01</span></td>
-            <td class="w100"><textarea rows="5" class="w100" id="inp4" oninput="inp(3);" /></textarea></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp4" oninput="inp(3);"></textarea></td>
         </tr>
         <tr>
             <td><span>oi</span></td>
-            <td class="w100"><textarea rows="5" class="w100" id="inp5" oninput="inp(4);" /></textarea></td>
-        </tr>
-        <tr>
-            <td><span>+-</span></td>
-            <td class="w100"><textarea rows="5" class="w100" id="inp6" oninput="inp(5);" /></textarea></td>
-        </tr>
-        <tr>
-            <td><span>*-</span></td>
-            <td class="w100"><textarea rows="5" class="w100" id="inp7" oninput="inp(6);" /></textarea></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp5" oninput="inp(4);"></textarea></td>
         </tr>
         <tr>
             <td><span>.,</span></td>
-            <td class="w100"><textarea rows="5" class="w100" id="inp8" oninput="inp(7);" /></textarea></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp8" oninput="inp(7);"></textarea></td>
+        </tr>
+        <tr>
+            <td><span>+-</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp6" oninput="inp(5);"></textarea></td>
+        </tr>
+        <tr>
+            <td><span>._</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp2" oninput="inp(1);"></textarea></td>
+        </tr>
+        <tr>
+            <td><span>*-</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp7" oninput="inp(6);"></textarea></td>
         </tr>
     </table>
     <div class="cn">
         <span>add:</span>
-        <label><b>dot:</b> <input type="text" maxlength="1" class="inputad" id="addo" /></label>
-        <label><b>dash:</b> <input type="text" maxlength="1" class="inputad" id="addi" /></label>
+        <label><b>dot:</b> <input type="text" maxlength="1" style="padding: 8px; width: 28px;" id="addo" /></label>
+        <label><b>dash:</b> <input type="text" maxlength="1" style="padding: 8px; width: 28px;" id="addi" /></label>
         <input type="button" value="add" style="padding: 8px;"
             onclick="addR(document.getElementById('addo'), document.getElementById('addi'));" />
         <span>lang:</span>
@@ -225,7 +248,7 @@
             cell1.innerHTML = "<span>" + iov + iiv + "</span>";
             cell2.classList.add("w100");
             var il = inps.length;
-            cell2.innerHTML = "<textarea rows=\"5\" class=\"w100\" id=\"inp" + (il + 1) + "\" oninput=\"inp(" + il + ");\" /></textarea>";
+            cell2.innerHTML = "<textarea rows=\"5\" class=\"w100\" id=\"inp" + (il + 1) + "\" oninput=\"inp(" + il + ");\"></textarea>";
             inps.push({ e: document.getElementById("inp" + (il + 1)), o: iov, i: iiv });
         }
 
@@ -243,26 +266,6 @@
             setLang('1');
         }
     </script>
-    <style>
-        .cn {
-            margin: auto;
-            max-width: 1024px;
-        }
-
-        .w100 {
-            width: 100%;
-        }
-
-        .inputad {
-            padding: 8px;
-            width: 28px;
-        }
-
-        span {
-            font-weight: bold;
-            margin-right: 4px;
-        }
-    </style>
 </body>
 
 </html>
