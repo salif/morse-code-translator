@@ -16,11 +16,6 @@
 
     <script src="./morse-decoder/morse-decoder.js"></script>
     <style>
-        .cn {
-            margin: auto;
-            max-width: 1024px;
-        }
-
         .w100 {
             width: 100%;
         }
@@ -33,7 +28,8 @@
 </head>
 
 <body style="margin: 0; padding: 20px;">
-    <table class="cn" id="tb">
+    <noscript>Your browser does not support JavaScript!</noscript>
+    <table style="margin: auto; max-width: 1024px;" id="tb">
         <tr>
             <td><span>abc</span></td>
             <td class="w100"><textarea rows="5" class="w100" id="inp0" placeholder="input" oninput="rinp();"></textarea>
@@ -44,20 +40,20 @@
             <td class="w100"><textarea rows="5" class="w100" id="inp1" oninput="inp(0);"></textarea></td>
         </tr>
         <tr>
-            <td><span>•−</span></td>
-            <td class="w100"><textarea rows="5" class="w100" id="inp3" oninput="inp(2);"></textarea></td>
-        </tr>
-        <tr>
             <td><span>01</span></td>
             <td class="w100"><textarea rows="5" class="w100" id="inp4" oninput="inp(3);"></textarea></td>
         </tr>
         <tr>
-            <td><span>oi</span></td>
-            <td class="w100"><textarea rows="5" class="w100" id="inp5" oninput="inp(4);"></textarea></td>
+            <td><span>•−</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp3" oninput="inp(2);"></textarea></td>
         </tr>
         <tr>
             <td><span>.,</span></td>
             <td class="w100"><textarea rows="5" class="w100" id="inp8" oninput="inp(7);"></textarea></td>
+        </tr>
+        <tr>
+            <td><span>oi</span></td>
+            <td class="w100"><textarea rows="5" class="w100" id="inp5" oninput="inp(4);"></textarea></td>
         </tr>
         <tr>
             <td><span>+-</span></td>
@@ -71,28 +67,30 @@
             <td><span>*-</span></td>
             <td class="w100"><textarea rows="5" class="w100" id="inp7" oninput="inp(6);"></textarea></td>
         </tr>
+        <tr>
+            <td><span></span></td>
+            <td class="w100">
+                <label><b>dot:</b>&nbsp;<input type="text" style="padding: 8px; width: 28px;" id="addo" /></label>
+                &nbsp;<label><b>dash:</b>&nbsp;<input type="text" style="padding: 8px; width: 28px;"
+                        id="addi" /></label>
+                &nbsp;<input type="button" value="add" style="padding: 8px;"
+                    onclick="addR(document.getElementById('addo'), document.getElementById('addi'));" />
+                &nbsp;&nbsp;<span>lang:</span>
+                <select style="padding: 8px;" onchange="setLang(this.value || this.options[this.selectedIndex].value);">
+                    <option value="1">Latin</option>
+                    <option value="4">Latin Extended</option>
+                    <option value="5">Cyrillic</option>
+                    <option value="6">Greek</option>
+                    <option value="7">Hebrew</option>
+                    <option value="8">Arabic</option>
+                    <option value="9">Persian</option>
+                    <option value="10">Japanese</option>
+                    <option value="11">Korean</option>
+                    <option value="12">Thai</option>
+                </select>
+            </td>
+        </tr>
     </table>
-    <div class="cn">
-        <span>add:</span>
-        <label><b>dot:</b> <input type="text" maxlength="1" style="padding: 8px; width: 28px;" id="addo" /></label>
-        <label><b>dash:</b> <input type="text" maxlength="1" style="padding: 8px; width: 28px;" id="addi" /></label>
-        <input type="button" value="add" style="padding: 8px;"
-            onclick="addR(document.getElementById('addo'), document.getElementById('addi'));" />
-        <span>lang:</span>
-        <select style="padding: 8px;" onchange="setLang(this.value || this.options[this.selectedIndex].value);">
-            <option value="1">Latin</option>
-            <option value="4">Latin Extended</option>
-            <option value="5">Cyrillic</option>
-            <option value="6">Greek</option>
-            <option value="7">Hebrew</option>
-            <option value="8">Arabic</option>
-            <option value="9">Persian</option>
-            <option value="10">Japanese</option>
-            <option value="11">Korean</option>
-            <option value="12">Thai</option>
-        </select>
-    </div>
-    <noscript>You should enable JavaScript</noscript>
     <script>
         var morseEncode = {};
         var morseDecode = { m: {}, o: {} };
@@ -234,11 +232,11 @@
         function addR(io, ii) {
             var iov = io.value;
             var iiv = ii.value;
-            if (iov.length != 1) {
+            if (iov.length == 0) {
                 io.focus();
                 return;
             }
-            if (iiv.length != 1) {
+            if (iiv.length == 0) {
                 ii.focus();
                 return;
             }
@@ -250,6 +248,8 @@
             var il = inps.length;
             cell2.innerHTML = "<textarea rows=\"5\" class=\"w100\" id=\"inp" + (il + 1) + "\" oninput=\"inp(" + il + ");\"></textarea>";
             inps.push({ e: document.getElementById("inp" + (il + 1)), o: iov, i: iiv });
+            io.value = "";
+            ii.value = "";
         }
 
         window.onload = function () {
