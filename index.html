@@ -13,8 +13,6 @@
     <meta property="og:description" content="Morse Code Encode and Decode Web Tool" />
     <meta name="twitter:title" content="Morse Code Encode and Decode" />
     <meta name="twitter:description" content="Morse Code Encode and Decode Web Tool" />
-
-    <script src="./morse-decoder/morse-decoder.js"></script>
     <style>
         .w100 {
             width: 100%;
@@ -23,6 +21,11 @@
         span {
             font-weight: bold;
             margin-right: 4px;
+        }
+
+        .inp {
+            padding: 8px;
+            width: 28px;
         }
     </style>
 </head>
@@ -70,11 +73,11 @@
         <tr>
             <td><span></span></td>
             <td class="w100">
-                <label><b>dot:</b>&nbsp;<input type="text" style="padding: 8px; width: 28px;" id="addo" /></label>
-                &nbsp;<label><b>dash:</b>&nbsp;<input type="text" style="padding: 8px; width: 28px;"
-                        id="addi" /></label>
+                <label><b>dot:</b>&nbsp;<input type="text" class="inp" id="addo" /></label>
+                &nbsp;<label><b>dash:</b>&nbsp;<input type="text" class="inp" id="addi" /></label>
+                &nbsp;<label><b>sep:</b>&nbsp;<input type="text" class="inp" id="addsp" value="/" /></label>
                 &nbsp;<input type="button" value="add" style="padding: 8px;"
-                    onclick="addR(document.getElementById('addo'), document.getElementById('addi'));" />
+                    onclick="addR(document.getElementById('addo'), document.getElementById('addi'), document.getElementById('addsp'));" />
                 &nbsp;&nbsp;<span>lang:</span>
                 <select style="padding: 8px;" onchange="setLang(this.value || this.options[this.selectedIndex].value);">
                     <option value="1">Latin</option>
@@ -97,18 +100,21 @@
         var inp0;
         var inps = [];
 
-        function convert(value, inpO, inpI, vO, vI) {
+        function convert(value, inpO, inpI, inpSp, vO, vI, vSp) {
             var output = "";
+            if (vO.length > 1 || vI.length > 1 || vSp.length > 1) {
+                return value.split(vO).join(inpO).split(vI).join(inpI)
+            }
             for (var i = 0; i < value.length; i++) {
                 var c = value.charAt(i);
                 if (c === vO) {
                     output += inpO;
                 } else if (c === vI) {
                     output += inpI;
+                } else if (c === vSp) {
+                    output += inpSp;
                 } else if (c === " ") {
                     output += " ";
-                } else if (c === "/") {
-                    output += "/";
                 } else {
                     throw new Error("Illegal symbol: " + c);
                 }
@@ -118,25 +124,25 @@
 
         function encode(value) {
             if (value.length == 0) {
-                return { value: "", o: "0", i: "1" };
+                return { value: "", o: "0", i: "1", sp: "/" };
             }
-            var output = "";
+            var output = [];
             for (var i = 0; i < value.length; i++) {
                 var ch = value.charAt(i);
                 if (ch === " ") {
-                    output += "/ ";
+                    output.push("/");
                     continue;
                 } else if (ch === "\n" || ch === "\r" || ch === "\t") {
-                    output += "/ ";
+                    output.push("/");
                     continue;
                 }
                 var c = morseEncode[ch];
                 if (c == undefined) {
-                    throw new Error("Illegal symbol: " + value.charAt(i));
+                    throw new Error("Illegal symbol: " + ch);
                 }
-                output += c + " ";
+                output.push(c);
             }
-            return { value: output.substring(0, output.length - 1), o: "0", i: "1" };
+            return { value: output.join(" "), o: "0", i: "1", sp: "/" };
         }
 
         function decode(value) {
@@ -144,28 +150,27 @@
                 return [];
             }
             var output = [];
-            var sn = value.split(" / ");
+            var sn = value.split(" ");
             for (var i = 0; i < sn.length; i++) {
-                var sni = sn[i].split(" ");
-                for (var j = 0; j < sni.length; j++) {
-                    var wr = sni[j];
-                    var c = morseDecode.m[wr];
+                var wr = sn[i];
+                if (wr === "/") {
+                    output.push(" ");
+                    continue;
+                }
+                var c = morseDecode.m[wr];
+                if (c == undefined) {
+                    c = morseDecode.o[wr];
                     if (c == undefined) {
-                        c = morseDecode.o[wr];
-                        if (c == undefined) {
-                            if (wr.length > 0) {
-                                output.push("#");
-                            }
-                        } else {
-                            output.push(c);
+                        if (wr.length > 0) {
+                            output.push("#");
                         }
                     } else {
                         output.push(c);
                     }
+                } else {
+                    output.push(c);
                 }
-                output.push(" ");
             }
-            output.pop();
             return output;
         }
 
@@ -174,7 +179,7 @@
                 var m = encode(inp0.e.value.toLocaleUpperCase());
                 for (var i = 0; i < inps.length; i++) {
                     var ip = inps[i];
-                    ip.e.value = convert(m.value, ip.o, ip.i, m.o, m.i);
+                    ip.e.value = convert(m.value, ip.o, ip.i, ip.sp, m.o, m.i, m.sp);
                 }
             } catch (err) {
                 for (var i = 0; i < inps.length; i++) {
@@ -187,19 +192,19 @@
         function inp(ie) {
             var e = inps[ie];
             try {
-                inp0.e.value = decode(convert(e.e.value, "0", "1", e.o, e.i)).join("").toLocaleLowerCase();
+                inp0.e.value = decode(convert(e.e.value, "0", "1", "/", e.o, e.i, e.sp)).join("").toLocaleLowerCase();
                 for (var i = 0; i < inps.length; i++) {
                     var ip = inps[i];
-                    if (ip.o === e.o && ip.i === e.i) {
+                    if (ip.o === e.o && ip.i === e.i && ip.sp === e.sp) {
                         continue;
                     }
-                    ip.e.value = convert(e.e.value, ip.o, ip.i, e.o, e.i);
+                    ip.e.value = convert(e.e.value, ip.o, ip.i, ip.sp, e.o, e.i, e.sp);
                 }
             } catch (err) {
                 inp0.e.value = err;
                 for (var i = 0; i < inps.length; i++) {
                     var ip = inps[i];
-                    if (ip.o === e.o && ip.i === e.i) {
+                    if (ip.o === e.o && ip.i === e.i && ip.sp === e.sp) {
                         continue;
                     }
                     ip.e.value = err;
@@ -229,9 +234,10 @@
             }
         }
 
-        function addR(io, ii) {
+        function addR(io, ii, isp) {
             var iov = io.value;
             var iiv = ii.value;
+            var ispv = isp.value;
             if (iov.length == 0) {
                 io.focus();
                 return;
@@ -240,28 +246,33 @@
                 ii.focus();
                 return;
             }
+            if (ispv.length == 0) {
+                isp.focus();
+                return;
+            }
             var row = document.getElementById("tb").insertRow();
             var cell1 = row.insertCell(0);
             var cell2 = row.insertCell(1);
-            cell1.innerHTML = "<span>" + iov + iiv + "</span>";
+            cell1.innerHTML = "<span>" + iov + iiv + ispv + "</span>";
             cell2.classList.add("w100");
             var il = inps.length;
             cell2.innerHTML = "<textarea rows=\"5\" class=\"w100\" id=\"inp" + (il + 1) + "\" oninput=\"inp(" + il + ");\"></textarea>";
-            inps.push({ e: document.getElementById("inp" + (il + 1)), o: iov, i: iiv });
+            inps.push({ e: document.getElementById("inp" + (il + 1)), o: iov, i: iiv, sp: ispv });
             io.value = "";
             ii.value = "";
+            isp.value = "";
         }
 
         window.onload = function () {
             inp0 = { e: document.getElementById("inp0") };
-            inps.push({ e: document.getElementById("inp1"), o: '.', i: '-' });
-            inps.push({ e: document.getElementById("inp2"), o: '.', i: '_' });
-            inps.push({ e: document.getElementById("inp3"), o: '•', i: '−' });
-            inps.push({ e: document.getElementById("inp4"), o: '0', i: '1' });
-            inps.push({ e: document.getElementById("inp5"), o: 'o', i: 'i' });
-            inps.push({ e: document.getElementById("inp6"), o: '+', i: '-' });
-            inps.push({ e: document.getElementById("inp7"), o: '*', i: '-' });
-            inps.push({ e: document.getElementById("inp8"), o: '.', i: ',' });
+            inps.push({ e: document.getElementById("inp1"), o: '.', i: '-', sp: '/' });
+            inps.push({ e: document.getElementById("inp2"), o: '.', i: '_', sp: '/' });
+            inps.push({ e: document.getElementById("inp3"), o: '•', i: '−', sp: '/' });
+            inps.push({ e: document.getElementById("inp4"), o: '0', i: '1', sp: '/' });
+            inps.push({ e: document.getElementById("inp5"), o: 'o', i: 'i', sp: '/' });
+            inps.push({ e: document.getElementById("inp6"), o: '+', i: '-', sp: '/' });
+            inps.push({ e: document.getElementById("inp7"), o: '*', i: '-', sp: '/' });
+            inps.push({ e: document.getElementById("inp8"), o: '.', i: ',', sp: '/' });
 
             setLang('1');
         }
