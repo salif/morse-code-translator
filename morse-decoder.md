@@ -1,3 +1,13 @@
+# [Morse Code Translator](https://morsedecoder.com) with Audio - Morse Decoder
+
+  [npm-version]: https://img.shields.io/npm/v/morse-decoder.svg?style=flat-square
+  [npm-downloads]: https://img.shields.io/npm/dm/morse-decoder.svg?style=flat-square
+
+  [npm]: https://www.npmjs.com/package/morse-decoder
+
+## License
+
+```
 The MIT License (MIT)
 
 Copyright (c) 2020 Burak Özdemir
@@ -19,3 +29,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```

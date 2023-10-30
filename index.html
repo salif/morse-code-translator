@@ -78,7 +78,7 @@
                 &nbsp;<label><b>sep:</b>&nbsp;<input type="text" class="inp" id="addsp" value="/" /></label>
                 &nbsp;<input type="button" value="add" style="padding: 8px;"
                     onclick="addR(document.getElementById('addo'), document.getElementById('addi'), document.getElementById('addsp'));" />
-                &nbsp;&nbsp;<span>lang:</span>
+                &nbsp;&nbsp;<span>language:</span>
                 <select style="padding: 8px;" onchange="setLang(this.value || this.options[this.selectedIndex].value);">
                     <option value="1">Latin</option>
                     <option value="4">Latin Extended</option>
@@ -277,7 +277,7 @@
             setLang('1');
         }
     </script>
-    <!-- See ./morse-decoder/README.md -->
+    <!-- See ./morse-decoder.md -->
     <script>
         var characters = {
             '1': { // Latin => https://en.wikipedia.org/wiki/Morse_code
