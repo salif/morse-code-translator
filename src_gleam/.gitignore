@@ -1,0 +1,12 @@
+*.beam
+*.ez
+erl_crash.dump
+
+/build/dev/erlang
+/build/dev/javascript/gleam_stdlib/*.erl
+/build/dev/javascript/gleam_stdlib/_gleam_artefacts
+/build/dev/javascript/gleeunit
+/build/dev/javascript/morse_code_translator/_gleam_artefacts
+/build/lsp
+/build/packages
+/build/prod
