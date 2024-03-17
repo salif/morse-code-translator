@@ -20,14 +20,16 @@ function oninp(this_inp, skip_abc) {
     if (this_inp.str_dot === "abc" && this_inp.str_dash === "") {
         // first non abc textarea
         const t_inp = window.inputs[0]
-        try {
-            // TODO: language
-            t_inp.el.value = morse_code.encode(window.characters_dict.get("1"), this_inp.el.value,
-                new morse_code.EncodeOptions(t_inp.str_dot, t_inp.str_dash, t_inp.str_sp, t_inp.str_sep, false))
-        } catch (err) {
-            // panic from gleam
+        // TODO: language
+        const result = morse_code.encode(
+            window.characters_dict.get("1"), this_inp.el.value, new morse_code.EncodeOptions(
+                t_inp.str_dot, t_inp.str_dash, t_inp.str_sp, t_inp.str_sep, false))
+        // TODO: improve
+        if (result.isOk()) {
+            t_inp.el.value = result["0"]
+        } else {
             window.inputs.forEach(inp => {
-                inp.el.value = err
+                inp.el.value = result["0"].msg
             })
             return
         }
@@ -36,26 +38,22 @@ function oninp(this_inp, skip_abc) {
     } else {
         // skip because abc is input
         if (!skip_abc) {
-            try {
-                window.input_abc.el.value = morse_code.decode(window.characters_list.get("1"), this_inp.el.value, new morse_code.DecodeOptions(this_inp.str_dot,
-                    this_inp.str_dash, this_inp.str_sp, this_inp.str_sep, false))
-            }
-            catch (err) {
-                // panic from gleam
-                window.input_abc.el.value = err
-            }
+            window.input_abc.el.value = morse_code.decode_to_string(
+                window.characters_list.get("1"), this_inp.el.value, new morse_code.DecodeOptions(
+                    this_inp.str_dot, this_inp.str_dash, this_inp.str_sp, this_inp.str_sep, false))
+
         }
         window.inputs.forEach(inp => {
             // skip input object
             if (!(this_inp.str_dot === inp.str_dot && this_inp.str_dash === inp.str_dash &&
                 this_inp.str_sp === inp.str_sp && this_inp.str_sep === inp.str_sep)) {
-                try {
-                    inp.el.value = morse_code.convert(this_inp.el.value, new morse_code.ConvertOptions(this_inp.str_dot, inp.str_dot,
-                        this_inp.str_dash, inp.str_dash, this_inp.str_sp, inp.str_sp, this_inp.str_sep, inp.str_sep))
-                } catch (err) {
-                    // panic from gleam
-                    inp.el.value = err
-                }
+                inp.el.value = morse_code.convert_to_string(this_inp.el.value,
+                    new morse_code.ConvertOptions(
+                        this_inp.str_dot, inp.str_dot,
+                        this_inp.str_dash, inp.str_dash,
+                        this_inp.str_sp, inp.str_sp,
+                        this_inp.str_sep, inp.str_sep))
+
             }
         })
     }
@@ -68,7 +66,8 @@ function escapeHtml(unsafe) {
 
 function main_table_add_row(fn_oninput, options) {
     const new_row = window.main_table.insertRow(0)
-    new_row.insertCell(0).innerHTML = "<span>" + escapeHtml(options.str_dot + options.str_dash) + "</span>"
+    new_row.insertCell(0).innerHTML = "<span>" +
+        escapeHtml(options.str_dot + options.str_dash) + "</span>"
     const new_cell = new_row.insertCell(1)
     new_cell.style.width = "100%"
     const el_text_area = document.createElement("textarea")
