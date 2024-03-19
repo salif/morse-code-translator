@@ -2,86 +2,86 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Morse Code Translator</title>
-    <meta name="robots" content="index, follow" />
-    <meta name="author" content="Salif Mehmed" />
-    <link rel="canonical" href="https://salif.github.io/morse-code-translator/" />
-    <meta property="og:title" content="Morse Code Translator" />
-    <meta property="og:description" content="Morse Code Encode and Decode" />
-    <link rel="stylesheet" href="./simple.min.css" />
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<title>Morse Code Translator</title>
+	<meta name="robots" content="index, follow" />
+	<meta name="author" content="Salif Mehmed" />
+	<link rel="canonical" href="https://salif.github.io/morse-code-translator/" />
+	<meta property="og:title" content="Morse Code Translator" />
+	<meta property="og:description" content="Morse Code Encode and Decode" />
+	<link rel="stylesheet" href="./simple.min.css" />
 </head>
 
 <body style="margin: 0; padding: 20px;">
-    <noscript>Your browser does not support JavaScript!</noscript>
-    <table id="main_table">
-        <tr>
-            <td><span></span></td>
-            <td style="width: 100%;">
-                <label><b>dot:</b>&nbsp;<input type="text" id="inp_dot" />
-                </label> &nbsp; <label><b>dash:</b>&nbsp;<input type="text" id="inp_dash" />
-                </label> &nbsp; <label><b>space:</b>&nbsp;<input type="text" id="inp_space" value="/" />
-                </label> &nbsp; <label><b>sep:</b>&nbsp;<input type="text" id="inp_sep" value=" " />
-                </label> &nbsp; <input type="button" value="add" onclick="window.add_row(document.getElementById('inp_dot'),
+	<noscript>Your browser does not support JavaScript!</noscript>
+	<table id="main_table">
+		<tr>
+			<td><span></span></td>
+			<td style="width: 100%;">
+				<label><b>dot:</b>&nbsp;<input type="text" id="inp_dot" />
+				</label> &nbsp; <label><b>dash:</b>&nbsp;<input type="text" id="inp_dash" />
+				</label> &nbsp; <label><b>space:</b>&nbsp;<input type="text" id="inp_space" value="/" />
+				</label> &nbsp; <label><b>sep:</b>&nbsp;<input type="text" id="inp_sep" value=" " />
+				</label> &nbsp; <input type="button" value="add" onclick="window.add_row(document.getElementById('inp_dot'),
                 document.getElementById('inp_dash'), document.getElementById('inp_space'),
                 document.getElementById('inp_sep'));" /> &nbsp;&nbsp;<span>lang:</span>
-                <select onchange="window.set_lang(this.value || this.options[this.selectedIndex].value);">
-                    <option value="1">Latin</option>
-                    <option value="4">Latin Extended</option>
-                    <option value="5">Cyrillic</option>
-                    <option value="6">Greek</option>
-                    <option value="7">Hebrew</option>
-                    <option value="8">Arabic</option>
-                    <option value="9">Persian</option>
-                    <option value="10">Japanese</option>
-                    <option value="11">Korean</option>
-                    <option value="12">Thai</option>
-                </select>
-            </td>
-        </tr>
-    </table>
-    <script type="module" src="./index.js?v=1"></script>
-    <style>
-        #main_table {
-            margin: auto;
-            max-width: 1024px;
-        }
+				<select onchange="window.set_lang(this.value || this.options[this.selectedIndex].value);">
+					<option value="1">Latin</option>
+					<option value="4">Latin Extended</option>
+					<option value="5">Cyrillic</option>
+					<option value="6">Greek</option>
+					<option value="7">Hebrew</option>
+					<option value="8">Arabic</option>
+					<option value="9">Persian</option>
+					<option value="10">Japanese</option>
+					<option value="11">Korean</option>
+					<option value="12">Thai</option>
+				</select>
+			</td>
+		</tr>
+	</table>
+	<script type="module" src="./index.js?v=2"></script>
+	<style>
+		#main_table {
+			margin: auto;
+			max-width: 1024px;
+		}
 
-        #main_table tr:nth-child(even) {
-            background-color: unset;
-        }
+		#main_table tr:nth-child(even) {
+			background-color: unset;
+		}
 
-        #main_table td {
-            border: unset;
-            padding: 0.1rem;
-        }
+		#main_table td {
+			border: unset;
+			padding: 0.1rem;
+		}
 
-        #main_table span {
-            font-weight: bold;
-            margin-right: 4px;
-        }
+		#main_table span {
+			font-weight: bold;
+			margin-right: 4px;
+		}
 
-        #main_table label {
-            display: unset;
-        }
+		#main_table label {
+			display: unset;
+		}
 
-        #main_table input[type="text"] {
-            width: 32px;
-            display: inline-block;
-        }
+		#main_table input[type="text"] {
+			width: 32px;
+			display: inline-block;
+		}
 
-        #main_table select {
-            display: inline-block;
-        }
+		#main_table select {
+			display: inline-block;
+		}
 
-        #main_table textarea {
-            margin-bottom: unset;
-        }
+		#main_table textarea {
+			margin-bottom: unset;
+		}
 
-    </style>
-    <script data-goatcounter="https://sgi.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+	</style>
+	<script data-goatcounter="https://sgi.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 
 </html>
