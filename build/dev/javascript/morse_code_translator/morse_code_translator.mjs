@@ -1,4 +1,5 @@
 import * as $list from "../gleam_stdlib/gleam/list.mjs";
+import * as $option from "../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../gleam_stdlib/gleam/result.mjs";
 import * as $string from "../gleam_stdlib/gleam/string.mjs";
 import * as $characters from "./characters.mjs";
@@ -76,68 +77,6 @@ function list_key_find(keys, desired_key, language_num) {
   }
 }
 
-export function encode(input, morse_code_list, options) {
-  let _pipe = input;
-  let _pipe$1 = $string.to_graphemes(_pipe);
-  let _pipe$2 = $list.try_map(
-    _pipe$1,
-    (g) => {
-      if (g === " ") {
-        return new Ok(options.output_space);
-      } else if (g === "\n") {
-        return new Ok(options.output_space);
-      } else if (g === "\r") {
-        return new Ok(options.output_space);
-      } else if (g === "\t") {
-        return new Ok(options.output_space);
-      } else {
-        let g$1 = (() => {
-          let $ = options.is_uppercase;
-          if ($) {
-            return g;
-          } else {
-            return $string.uppercase(g);
-          }
-        })();
-        let $ = list_key_find(morse_code_list, g$1, options.language_num);
-        if ($.isOk()) {
-          let bools = $[0];
-          let _pipe$2 = bools;
-          let _pipe$3 = $list.map(
-            _pipe$2,
-            (b) => {
-              if (b) {
-                return options.output_dash;
-              } else {
-                return options.output_dot;
-              }
-            },
-          );
-          let _pipe$4 = $string.join(_pipe$3, "");
-          return new Ok(_pipe$4);
-        } else {
-          return new Error(new MorseCodeError("Invalid symbol: " + g$1));
-        }
-      }
-    },
-  );
-  return $result.map(
-    _pipe$2,
-    (_capture) => { return $string.join(_capture, options.output_separator); },
-  );
-}
-
-export function encode_to_string(input, morse_code_list, options) {
-  let $ = encode(input, morse_code_list, options);
-  if ($.isOk()) {
-    let value = $[0];
-    return value;
-  } else {
-    let value = $[0];
-    return value.msg;
-  }
-}
-
 function list_value_find(values, desired_value, language_num) {
   let $ = $list.filter(values, (v) => { return isEqual(v[2], desired_value); });
   if ($.hasLength(0)) {
@@ -162,76 +101,6 @@ function list_value_find(values, desired_value, language_num) {
       let _pipe = $list.at(dublic_lang_values, 0);
       return $result.map(_pipe, (value) => { return value[1]; });
     }
-  }
-}
-
-export function decode(input, morse_code_list, options) {
-  let _pipe = input;
-  let _pipe$1 = $string.split(_pipe, options.input_separator);
-  let _pipe$2 = $list.try_map(
-    _pipe$1,
-    (w) => {
-      let $ = true;
-      if (w === "") {
-        return new Ok("");
-      } else if (w === options.input_space) {
-        return new Ok(" ");
-      } else {
-        let _pipe$2 = w;
-        let _pipe$3 = $string.to_graphemes(_pipe$2);
-        let _pipe$4 = $list.try_map(
-          _pipe$3,
-          (g) => {
-            let $1 = true;
-            if (g === options.input_dot) {
-              return new Ok(false);
-            } else if (g === options.input_dash) {
-              return new Ok(true);
-            } else {
-              return new Error(
-                new MorseCodeError("Invalid morse code symbol: " + g),
-              );
-            }
-          },
-        );
-        return $result.try$(
-          _pipe$4,
-          (bools) => {
-            let $1 = list_value_find(
-              morse_code_list,
-              bools,
-              options.language_num,
-            );
-            if ($1.isOk()) {
-              let value = $1[0];
-              let $2 = options.to_uppercase;
-              if ($2) {
-                return new Ok(value);
-              } else {
-                return new Ok($string.lowercase(value));
-              }
-            } else {
-              return new Error(new MorseCodeError("Invalid symbol: " + w));
-            }
-          },
-        );
-      }
-    },
-  );
-  return $result.map(
-    _pipe$2,
-    (_capture) => { return $string.join(_capture, ""); },
-  );
-}
-
-export function decode_to_string(input, morse_code_list, options) {
-  let $ = decode(input, morse_code_list, options);
-  if ($.isOk()) {
-    let value = $[0];
-    return value;
-  } else {
-    let value = $[0];
-    return value.msg;
   }
 }
 
@@ -289,6 +158,170 @@ export const default_to_uppercase = false;
 export const language_num_latin = "1";
 
 export const default_language_num = language_num_latin;
+
+export function encode(input, options, morse_code_dict) {
+  let opt_output_dot = $option.unwrap(options.output_dot, default_dot);
+  let opt_output_dash = $option.unwrap(options.output_dash, default_dash);
+  let opt_output_space = $option.unwrap(options.output_space, default_space);
+  let opt_output_separator = $option.unwrap(
+    options.output_separator,
+    default_separator,
+  );
+  let opt_is_uppercase = $option.unwrap(
+    options.is_uppercase,
+    default_is_uppercase,
+  );
+  let opt_language_num = $option.unwrap(
+    options.language_num,
+    default_language_num,
+  );
+  let _pipe = input;
+  let _pipe$1 = $string.to_graphemes(_pipe);
+  let _pipe$2 = $list.try_map(
+    _pipe$1,
+    (g) => {
+      if (g === " ") {
+        return new Ok(opt_output_space);
+      } else if (g === "\n") {
+        return new Ok(opt_output_space);
+      } else if (g === "\r") {
+        return new Ok(opt_output_space);
+      } else if (g === "\t") {
+        return new Ok(opt_output_space);
+      } else {
+        let g$1 = (() => {
+          if (opt_is_uppercase) {
+            return g;
+          } else {
+            return $string.uppercase(g);
+          }
+        })();
+        let $ = list_key_find(
+          $option.unwrap(morse_code_dict, morse_code_list),
+          g$1,
+          opt_language_num,
+        );
+        if ($.isOk()) {
+          let bools = $[0];
+          let _pipe$2 = bools;
+          let _pipe$3 = $list.map(
+            _pipe$2,
+            (b) => {
+              if (b) {
+                return opt_output_dash;
+              } else {
+                return opt_output_dot;
+              }
+            },
+          );
+          let _pipe$4 = $string.join(_pipe$3, "");
+          return new Ok(_pipe$4);
+        } else {
+          return new Error(new MorseCodeError("Invalid symbol: " + g$1));
+        }
+      }
+    },
+  );
+  return $result.map(
+    _pipe$2,
+    (_capture) => { return $string.join(_capture, opt_output_separator); },
+  );
+}
+
+export function encode_to_string(input, options, morse_code_dict) {
+  let $ = encode(input, options, morse_code_dict);
+  if ($.isOk()) {
+    let value = $[0];
+    return value;
+  } else {
+    let value = $[0];
+    return value.msg;
+  }
+}
+
+export function decode(input, options, morse_code_dict) {
+  let opt_input_dot = $option.unwrap(options.input_dot, default_dot);
+  let opt_input_dash = $option.unwrap(options.input_dash, default_dash);
+  let opt_input_space = $option.unwrap(options.input_space, default_space);
+  let opt_input_separator = $option.unwrap(
+    options.input_separator,
+    default_separator,
+  );
+  let opt_to_uppercase = $option.unwrap(
+    options.to_uppercase,
+    default_to_uppercase,
+  );
+  let opt_language_num = $option.unwrap(
+    options.language_num,
+    default_language_num,
+  );
+  let _pipe = input;
+  let _pipe$1 = $string.split(_pipe, opt_input_separator);
+  let _pipe$2 = $list.try_map(
+    _pipe$1,
+    (w) => {
+      let $ = true;
+      if (w === "") {
+        return new Ok("");
+      } else if (w === opt_input_space) {
+        return new Ok(" ");
+      } else {
+        let _pipe$2 = w;
+        let _pipe$3 = $string.to_graphemes(_pipe$2);
+        let _pipe$4 = $list.try_map(
+          _pipe$3,
+          (g) => {
+            let $1 = true;
+            if (g === opt_input_dot) {
+              return new Ok(false);
+            } else if (g === opt_input_dash) {
+              return new Ok(true);
+            } else {
+              return new Error(
+                new MorseCodeError("Invalid morse code symbol: " + g),
+              );
+            }
+          },
+        );
+        return $result.try$(
+          _pipe$4,
+          (bools) => {
+            let $1 = list_value_find(
+              $option.unwrap(morse_code_dict, morse_code_list),
+              bools,
+              opt_language_num,
+            );
+            if ($1.isOk()) {
+              let value = $1[0];
+              if (opt_to_uppercase) {
+                return new Ok(value);
+              } else {
+                return new Ok($string.lowercase(value));
+              }
+            } else {
+              return new Error(new MorseCodeError("Invalid symbol: " + w));
+            }
+          },
+        );
+      }
+    },
+  );
+  return $result.map(
+    _pipe$2,
+    (_capture) => { return $string.join(_capture, ""); },
+  );
+}
+
+export function decode_to_string(input, options, morse_code_dict) {
+  let $ = decode(input, options, morse_code_dict);
+  if ($.isOk()) {
+    let value = $[0];
+    return value;
+  } else {
+    let value = $[0];
+    return value.msg;
+  }
+}
 
 export const language_num_numbers = "2";
 
