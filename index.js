@@ -1,4 +1,5 @@
 import * as morse_code from "./build/dev/javascript/morse_code_translator/morse_code_translator.mjs"
+import * as option from "./build/dev/javascript/gleam_stdlib/gleam/option.mjs"
 
 // button.onclick
 function set_lang(mc_lang) {
@@ -27,9 +28,11 @@ function oninp(this_inp, skip_abc) {
 	if (this_inp.str_dot === "abc" && this_inp.str_dash === "") {
 		// first non abc textarea
 		const t_inp = window.inputs[0]
-		const result = morse_code.encode(
-			this_inp.el.value, window.characters_list, new morse_code.EncodeOptions(
-				t_inp.str_dot, t_inp.str_dash, t_inp.str_sp, t_inp.str_sep, false, window.mc_lang))
+		const result = morse_code.encode(this_inp.el.value, new morse_code.EncodeOptions(
+			new option.Some(t_inp.str_dot), new option.Some(t_inp.str_dash),
+			new option.Some(t_inp.str_sp), new option.Some(t_inp.str_sep),
+			new option.Some(false), new option.Some(window.mc_lang)),
+			window.characters_list)
 		// TODO: improve
 		if (result.isOk()) {
 			t_inp.el.value = result["0"]
@@ -45,9 +48,11 @@ function oninp(this_inp, skip_abc) {
 		// skip because abc is input
 		if (!skip_abc) {
 			window.input_abc.el.value = morse_code.decode_to_string(
-				this_inp.el.value, window.characters_list, new morse_code.DecodeOptions(
-					this_inp.str_dot, this_inp.str_dash,
-					this_inp.str_sp, this_inp.str_sep, false, window.mc_lang))
+				this_inp.el.value, new morse_code.DecodeOptions(
+					new option.Some(this_inp.str_dot), new option.Some(this_inp.str_dash),
+					new option.Some(this_inp.str_sp), new option.Some(this_inp.str_sep),
+					new option.Some(false), new option.Some(window.mc_lang)),
+				window.characters_list)
 
 		}
 		window.inputs.forEach(inp => {
@@ -96,7 +101,7 @@ function main_table_add_row(fn_oninput, options) {
 document.body.onload = function () {
 	window.inputs = []
 	window.input_abc = {}
-	window.characters_list = morse_code.morse_code_list
+	window.characters_list = new option.Some(morse_code.morse_code_list)
 	window.mc_lang = "1"
 	// html table
 	window.el_main_table = document.getElementById("main_table")

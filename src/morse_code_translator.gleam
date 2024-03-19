@@ -1,6 +1,7 @@
 import gleam/string
 import gleam/list
 import gleam/result
+import gleam/option
 import characters
 
 pub const morse_code_list: MorseCodeList = characters.base_characters
@@ -52,37 +53,46 @@ pub type MorseCodeError {
 
 pub type EncodeOptions {
    EncodeOptions(
-      output_dot: String,
-      output_dash: String,
-      output_space: String,
-      output_separator: String,
-      is_uppercase: Bool,
-      language_num: String,
+      output_dot: option.Option(String),
+      output_dash: option.Option(String),
+      output_space: option.Option(String),
+      output_separator: option.Option(String),
+      is_uppercase: option.Option(Bool),
+      language_num: option.Option(String),
    )
 }
 
 pub fn encode(
    input: String,
-   morse_code_list: MorseCodeList,
    options: EncodeOptions,
+   morse_code_dict: option.Option(MorseCodeList),
 ) -> Result(String, MorseCodeError) {
+   let opt_output_dot: String = option.unwrap(options.output_dot, default_dot)
+   let opt_output_dash: String = option.unwrap(options.output_dash, default_dash)
+   let opt_output_space: String = option.unwrap(options.output_space, default_space)
+   let opt_output_separator: String = option.unwrap(options.output_separator, default_separator)
+   let opt_is_uppercase: Bool = option.unwrap(options.is_uppercase, default_is_uppercase)
+   let opt_language_num: String = option.unwrap(options.language_num, default_language_num)
+
    input
    |> string.to_graphemes
    |> list.try_map(fn(g: String) -> Result(String, MorseCodeError) {
       case g {
-         " " | "\n" | "\r" | "\t" -> Ok(options.output_space)
+         " " | "\n" | "\r" | "\t" -> Ok(opt_output_space)
          _ -> {
-            let g: String = case options.is_uppercase {
+            let g: String = case opt_is_uppercase {
                True -> g
                False -> string.uppercase(g)
             }
-            case list_key_find(morse_code_list, g, options.language_num) {
+            case
+               list_key_find(option.unwrap(morse_code_dict, morse_code_list), g, opt_language_num)
+            {
                Ok(bools) -> {
                   bools
                   |> list.map(fn(b: Bool) -> String {
                      case b {
-                        True -> options.output_dash
-                        False -> options.output_dot
+                        True -> opt_output_dash
+                        False -> opt_output_dot
                      }
                   })
                   |> string.join("")
@@ -93,15 +103,15 @@ pub fn encode(
          }
       }
    })
-   |> result.map(string.join(_, options.output_separator))
+   |> result.map(string.join(_, opt_output_separator))
 }
 
 pub fn encode_to_string(
    input: String,
-   morse_code_list: MorseCodeList,
    options: EncodeOptions,
+   morse_code_dict: option.Option(MorseCodeList),
 ) -> String {
-   case encode(input, morse_code_list, options) {
+   case encode(input, options, morse_code_dict) {
       Ok(value) -> value
       Error(value) -> value.msg
    }
@@ -109,40 +119,53 @@ pub fn encode_to_string(
 
 pub type DecodeOptions {
    DecodeOptions(
-      input_dot: String,
-      input_dash: String,
-      input_space: String,
-      input_separator: String,
-      to_uppercase: Bool,
-      language_num: String,
+      input_dot: option.Option(String),
+      input_dash: option.Option(String),
+      input_space: option.Option(String),
+      input_separator: option.Option(String),
+      to_uppercase: option.Option(Bool),
+      language_num: option.Option(String),
    )
 }
 
 pub fn decode(
    input: String,
-   morse_code_list: MorseCodeList,
    options: DecodeOptions,
+   morse_code_dict: option.Option(MorseCodeList),
 ) -> Result(String, MorseCodeError) {
+   let opt_input_dot: String = option.unwrap(options.input_dot, default_dot)
+   let opt_input_dash: String = option.unwrap(options.input_dash, default_dash)
+   let opt_input_space: String = option.unwrap(options.input_space, default_space)
+   let opt_input_separator: String = option.unwrap(options.input_separator, default_separator)
+   let opt_to_uppercase: Bool = option.unwrap(options.to_uppercase, default_to_uppercase)
+   let opt_language_num: String = option.unwrap(options.language_num, default_language_num)
+
    input
-   |> string.split(options.input_separator)
+   |> string.split(opt_input_separator)
    |> list.try_map(fn(w: String) -> Result(String, MorseCodeError) {
       case True {
          _ if w == "" -> Ok("")
-         _ if w == options.input_space -> Ok(" ")
+         _ if w == opt_input_space -> Ok(" ")
          _ -> {
             w
             |> string.to_graphemes
             |> list.try_map(fn(g: String) -> Result(Bool, MorseCodeError) {
                case True {
-                  _ if g == options.input_dot -> Ok(False)
-                  _ if g == options.input_dash -> Ok(True)
+                  _ if g == opt_input_dot -> Ok(False)
+                  _ if g == opt_input_dash -> Ok(True)
                   _ -> Error(MorseCodeError("Invalid morse code symbol: " <> g))
                }
             })
             |> result.try(fn(bools: List(Bool)) -> Result(String, MorseCodeError) {
-               case list_value_find(morse_code_list, bools, options.language_num) {
+               case
+                  list_value_find(
+                     option.unwrap(morse_code_dict, morse_code_list),
+                     bools,
+                     opt_language_num,
+                  )
+               {
                   Ok(value) -> {
-                     case options.to_uppercase {
+                     case opt_to_uppercase {
                         True -> Ok(value)
                         False -> Ok(string.lowercase(value))
                      }
@@ -158,17 +181,17 @@ pub fn decode(
 
 pub fn decode_to_string(
    input: String,
-   morse_code_list: MorseCodeList,
    options: DecodeOptions,
+   morse_code_dict: option.Option(MorseCodeList),
 ) -> String {
-   case decode(input, morse_code_list, options) {
+   case decode(input, options, morse_code_dict) {
       Ok(value) -> value
       Error(value) -> value.msg
    }
 }
 
 fn list_key_find(
-   keys: List(#(String, String, List(Bool))),
+   keys: MorseCodeList,
    desired_key: String,
    language_num: String,
 ) -> Result(List(Bool), Nil) {
@@ -189,7 +212,7 @@ fn list_key_find(
 }
 
 fn list_value_find(
-   values: List(#(String, String, List(Bool))),
+   values: MorseCodeList,
    desired_value: List(Bool),
    language_num: String,
 ) -> Result(String, Nil) {
