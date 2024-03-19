@@ -5,7 +5,6 @@
 
 ## Links
 
-* Gleam: [./src_gleam/README.md](./src_gleam/README.md)
 * Homepage: [salif.github.io/morse-code-translator](https://salif.github.io/morse-code-translator/)
 * GitHub: [github.com/salif/morse-code-translator](https://github.com/salif/morse-code-translator)
 * Codeberg: [codeberg.org/salif/morse-code-translator](https://codeberg.org/salif/morse-code-translator)
@@ -24,22 +23,22 @@ import morse_code_translator as mct
 pub fn main() {
    let demo_encode_options =
       mct.EncodeOptions(
-         Some(mct.default_dot),
-         Some(mct.default_dash),
-         Some(mct.default_space),
-         Some(mct.default_separator),
-         Some(mct.default_is_uppercase),
-         Some(mct.default_language_num),
+         output_dot: None,
+         output_dash: None,
+         output_space: None,
+         output_separator: None,
+         is_uppercase: None,
+         language_num: None,
       )
 
    let demo_decode_options =
       mct.DecodeOptions(
-         input_dot: Some(mct.default_dot),
-         input_dash: Some(mct.default_dash),
-         input_space: Some(mct.default_space),
-         input_separator: Some(mct.default_separator),
-         to_uppercase: Some(mct.default_to_uppercase),
-         language_num: Some(mct.default_language_num),
+         input_dot: None,
+         input_dash: None,
+         input_space: None,
+         input_separator: None,
+         to_uppercase: None,
+         language_num: None,
       )
 
    let demo_encode: Result(String, mct.MorseCodeError) =
@@ -58,11 +57,11 @@ pub fn main() {
    |> io.debug
    // "demo"
 
-   "-.. . -- ---"
+   "_.. . __ ___"
    |> mct.decode_to_string(
       mct.DecodeOptions(
          ..demo_decode_options,
-         to_uppercase: None,
+         input_dash: Some("_"),
          language_num: Some(mct.language_num_cyrillic),
       ),
       None,
