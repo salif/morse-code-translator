@@ -1,4 +1,11 @@
-import { Ok, Error, toList, CustomType as $CustomType, isEqual } from "../gleam.mjs";
+import {
+  Ok,
+  Error,
+  toList,
+  prepend as listPrepend,
+  CustomType as $CustomType,
+  isEqual,
+} from "../gleam.mjs";
 import * as $int from "../gleam/int.mjs";
 import * as $list from "../gleam/list.mjs";
 import * as $option from "../gleam/option.mjs";
@@ -229,7 +236,7 @@ function do_remove_dot_segments(loop$input, loop$accumulator) {
         } else {
           let segment$1 = segment;
           let accumulator$1 = accumulator;
-          return toList([segment$1], accumulator$1);
+          return listPrepend(segment$1, accumulator$1);
         }
       })();
       loop$input = rest;
@@ -260,18 +267,18 @@ export function to_string(uri) {
     let $ = uri.query;
     if ($ instanceof Some) {
       let query = $[0];
-      return toList(["?", query], parts);
+      return listPrepend("?", listPrepend(query, parts));
     } else {
       return parts;
     }
   })();
-  let parts$2 = toList([uri.path], parts$1);
+  let parts$2 = listPrepend(uri.path, parts$1);
   let parts$3 = (() => {
     let $ = uri.host;
     let $1 = $string.starts_with(uri.path, "/");
-    if ($ instanceof Some && !$1 && $[0] !== "") {
+    if ($ instanceof Some && !$1 && ($[0] !== "")) {
       let host = $[0];
-      return toList(["/"], parts$2);
+      return listPrepend("/", parts$2);
     } else {
       return parts$2;
     }
@@ -281,7 +288,7 @@ export function to_string(uri) {
     let $1 = uri.port;
     if ($ instanceof Some && $1 instanceof Some) {
       let port = $1[0];
-      return toList([":", $int.to_string(port)], parts$3);
+      return listPrepend(":", listPrepend($int.to_string(port), parts$3));
     } else {
       return parts$3;
     }
@@ -294,20 +301,26 @@ export function to_string(uri) {
       let s = $[0];
       let u = $1[0];
       let h = $2[0];
-      return toList([s, "://", u, "@", h], parts$4);
+      return listPrepend(
+        s,
+        listPrepend(
+          "://",
+          listPrepend(u, listPrepend("@", listPrepend(h, parts$4))),
+        ),
+      );
     } else if ($ instanceof Some && $1 instanceof None && $2 instanceof Some) {
       let s = $[0];
       let h = $2[0];
-      return toList([s, "://", h], parts$4);
+      return listPrepend(s, listPrepend("://", listPrepend(h, parts$4)));
     } else if ($ instanceof Some && $1 instanceof Some && $2 instanceof None) {
       let s = $[0];
-      return toList([s, ":"], parts$4);
+      return listPrepend(s, listPrepend(":", parts$4));
     } else if ($ instanceof Some && $1 instanceof None && $2 instanceof None) {
       let s = $[0];
-      return toList([s, ":"], parts$4);
+      return listPrepend(s, listPrepend(":", parts$4));
     } else if ($ instanceof None && $1 instanceof None && $2 instanceof Some) {
       let h = $2[0];
-      return toList(["//", h], parts$4);
+      return listPrepend("//", listPrepend(h, parts$4));
     } else {
       return parts$4;
     }
@@ -321,7 +334,7 @@ export function origin(uri) {
   let port = uri.port;
   if (scheme instanceof Some &&
   scheme[0] === "https" &&
-  isEqual(port, new Some(443))) {
+  (isEqual(port, new Some(443)))) {
     let origin$1 = new Uri(
       scheme,
       new None(),
@@ -334,7 +347,7 @@ export function origin(uri) {
     return new Ok(to_string(origin$1));
   } else if (scheme instanceof Some &&
   scheme[0] === "http" &&
-  isEqual(port, new Some(80))) {
+  (isEqual(port, new Some(80)))) {
     let origin$1 = new Uri(
       scheme,
       new None(),
@@ -346,7 +359,7 @@ export function origin(uri) {
     );
     return new Ok(to_string(origin$1));
   } else if (scheme instanceof Some &&
-  (scheme[0] === "http") || (scheme[0] === "https")) {
+  ((scheme[0] === "http") || (scheme[0] === "https"))) {
     let s = scheme[0];
     let origin$1 = new Uri(
       scheme,
@@ -368,7 +381,7 @@ function drop_last(elements) {
 }
 
 function join_segments(segments) {
-  return $string.join(toList([""], segments), "/");
+  return $string.join(listPrepend("", segments), "/");
 }
 
 export function merge(base, relative) {

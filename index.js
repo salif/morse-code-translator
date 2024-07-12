@@ -9,6 +9,7 @@ function set_lang(mc_lang) {
 
 // button.onclick
 function add_row(dot, dash, sp, sep) {
+	document.getElementById("add_row_div").style.display = "block";
 	if (dot.value.length == 0) { dot.focus(); return; }
 	if (dash.value.length == 0) { dash.focus(); return; }
 	if (sp.value.length == 0) { sp.focus(); return; }
@@ -20,6 +21,7 @@ function add_row(dot, dash, sp, sep) {
 	dash.value = ""
 	sp.value = ""
 	sep.value = ""
+	document.getElementById("add_row_div").style.display = "none";
 }
 
 // textarea.oninput
@@ -109,7 +111,6 @@ document.body.onload = function () {
 	window.set_lang = set_lang
 	window.add_row = add_row
 
-	main_table_add_row(oninp, { str_dot: "o", str_dash: "i", str_sp: "/", str_sep: " " })
 	main_table_add_row(oninp, { str_dot: ".", str_dash: ",", str_sp: "/", str_sep: " " })
 	main_table_add_row(oninp, { str_dot: "•", str_dash: "−", str_sp: "/", str_sep: " " })
 	main_table_add_row(oninp, { str_dot: "0", str_dash: "1", str_sp: "/", str_sep: " " })

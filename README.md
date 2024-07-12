@@ -5,9 +5,9 @@
 
 ## Links
 
-* Homepage: [salif.github.io/morse-code-translator](https://salif.github.io/morse-code-translator/)
-* GitHub: [github.com/salif/morse-code-translator](https://github.com/salif/morse-code-translator)
-* Codeberg: [codeberg.org/salif/morse-code-translator](https://codeberg.org/salif/morse-code-translator)
+* [Homepage](https://salif.github.io/morse-code-translator/)
+* [Source code \(Github\)](https://github.com/salif/morse-code-translator)
+* [Source code \(Codeberg\)](https://codeberg.org/salif/morse-code-translator)
 
 ## Usage
 

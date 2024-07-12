@@ -1,4 +1,11 @@
-import { Ok, Error, toList, CustomType as $CustomType, isEqual } from "../gleam.mjs";
+import {
+  Ok,
+  Error,
+  toList,
+  prepend as listPrepend,
+  CustomType as $CustomType,
+  isEqual,
+} from "../gleam.mjs";
 import * as $list from "../gleam/list.mjs";
 
 class Queue extends $CustomType {
@@ -31,11 +38,11 @@ export function length(queue) {
 }
 
 export function push_back(queue, item) {
-  return new Queue(toList([item], queue.in), queue.out);
+  return new Queue(listPrepend(item, queue.in), queue.out);
 }
 
 export function push_front(queue, item) {
-  return new Queue(queue.in, toList([item], queue.out));
+  return new Queue(queue.in, listPrepend(item, queue.out));
 }
 
 export function pop_back(loop$queue) {

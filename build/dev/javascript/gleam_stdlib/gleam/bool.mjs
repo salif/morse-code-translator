@@ -76,22 +76,6 @@ export function compare(a, b) {
   }
 }
 
-export function max(a, b) {
-  if (a) {
-    return true;
-  } else {
-    return b;
-  }
-}
-
-export function min(a, b) {
-  if (!a) {
-    return false;
-  } else {
-    return b;
-  }
-}
-
 export function to_int(bool) {
   if (!bool) {
     return 0;

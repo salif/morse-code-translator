@@ -1,4 +1,11 @@
-import { Ok, Error, toList, CustomType as $CustomType, isEqual } from "../gleam.mjs";
+import {
+  Ok,
+  Error,
+  toList,
+  prepend as listPrepend,
+  CustomType as $CustomType,
+  isEqual,
+} from "../gleam.mjs";
 import * as $dict from "../gleam/dict.mjs";
 import * as $int from "../gleam/int.mjs";
 import * as $list from "../gleam/list.mjs";
@@ -169,7 +176,7 @@ export function to_list(iterator) {
   let _pipe$1 = fold(
     _pipe,
     toList([]),
-    (acc, e) => { return toList([e], acc); },
+    (acc, e) => { return listPrepend(e, acc); },
   );
   return $list.reverse(_pipe$1);
 }
@@ -352,6 +359,33 @@ export function filter(iterator, predicate) {
   return new Iterator(_pipe);
 }
 
+function do_filter_map(loop$continuation, loop$f) {
+  while (true) {
+    let continuation = loop$continuation;
+    let f = loop$f;
+    let $ = continuation();
+    if ($ instanceof Stop) {
+      return new Stop();
+    } else {
+      let e = $[0];
+      let next = $[1];
+      let $1 = f(e);
+      if ($1.isOk()) {
+        let e$1 = $1[0];
+        return new Continue(e$1, () => { return do_filter_map(next, f); });
+      } else {
+        loop$continuation = next;
+        loop$f = f;
+      }
+    }
+  }
+}
+
+export function filter_map(iterator, f) {
+  let _pipe = () => { return do_filter_map(iterator.continuation, f); };
+  return new Iterator(_pipe);
+}
+
 export function cycle(iterator) {
   let _pipe = repeat(iterator);
   return flatten(_pipe);
@@ -381,6 +415,33 @@ function do_find(loop$continuation, loop$f) {
 export function find(haystack, is_desired) {
   let _pipe = haystack.continuation;
   return do_find(_pipe, is_desired);
+}
+
+function do_find_map(loop$continuation, loop$f) {
+  while (true) {
+    let continuation = loop$continuation;
+    let f = loop$f;
+    let $ = continuation();
+    if ($ instanceof Stop) {
+      return new Error(undefined);
+    } else {
+      let e = $[0];
+      let next = $[1];
+      let $1 = f(e);
+      if ($1.isOk()) {
+        let e$1 = $1[0];
+        return new Ok(e$1);
+      } else {
+        loop$continuation = next;
+        loop$f = f;
+      }
+    }
+  }
+}
+
+export function find_map(haystack, is_desired) {
+  let _pipe = haystack.continuation;
+  return do_find_map(_pipe, is_desired);
 }
 
 function do_index(continuation, next) {
@@ -524,7 +585,7 @@ function next_chunk(
         loop$continuation = next;
         loop$f = f;
         loop$previous_key = key;
-        loop$current_chunk = toList([e], current_chunk);
+        loop$current_chunk = listPrepend(e, current_chunk);
       } else {
         return new AnotherBy($list.reverse(current_chunk), key, e, next);
       }
@@ -576,7 +637,7 @@ function next_sized_chunk(loop$continuation, loop$left, loop$current_chunk) {
     } else {
       let e = $[0];
       let next = $[1];
-      let chunk$1 = toList([e], current_chunk);
+      let chunk$1 = listPrepend(e, current_chunk);
       let $1 = left > 1;
       if (!$1) {
         return new Another($list.reverse(chunk$1), next);
@@ -696,7 +757,7 @@ function update_group_with(el) {
   return (maybe_group) => {
     if (maybe_group instanceof Some) {
       let group$1 = maybe_group[0];
-      return toList([el], group$1);
+      return listPrepend(el, group$1);
     } else {
       return toList([el]);
     }
@@ -706,7 +767,7 @@ function update_group_with(el) {
 function group_updater(f) {
   return (groups, elem) => {
     let _pipe = groups;
-    return $dict.update(_pipe, f(elem), update_group_with(elem));
+    return $dict.upsert(_pipe, f(elem), update_group_with(elem));
   };
 }
 
@@ -891,6 +952,8 @@ export function each(iterator, f) {
 
 export function yield$(element, next) {
   return new Iterator(
-    () => { return new Continue(element, next().continuation); },
+    () => {
+      return new Continue(element, () => { return next().continuation(); });
+    },
   );
 }

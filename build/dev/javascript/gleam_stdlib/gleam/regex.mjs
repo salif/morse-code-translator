@@ -3,9 +3,12 @@ import * as $option from "../gleam/option.mjs";
 import {
   compile_regex as do_compile,
   regex_check as do_check,
-  split as js_split,
+  regex_split as do_split,
   regex_scan as do_scan,
+  regex_replace as replace,
 } from "../gleam_stdlib.mjs";
+
+export { replace };
 
 export class Match extends $CustomType {
   constructor(content, submatches) {
@@ -41,10 +44,6 @@ export function from_string(pattern) {
 
 export function check(regex, content) {
   return do_check(regex, content);
-}
-
-function do_split(regex, string) {
-  return js_split(string, regex);
 }
 
 export function split(regex, string) {

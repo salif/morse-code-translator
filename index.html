@@ -15,18 +15,18 @@
 </head>
 
 <body style="margin: 0; padding: 20px;">
-	<noscript>Your browser does not support JavaScript!</noscript>
+	<noscript><b>This page requires JavaScript to work properly.</b></noscript>
 	<table id="main_table">
 		<tr>
 			<td><span></span></td>
 			<td style="width: 100%;">
-				<label><b>dot:</b>&nbsp;<input type="text" id="inp_dot" />
-				</label> &nbsp; <label><b>dash:</b>&nbsp;<input type="text" id="inp_dash" />
-				</label> &nbsp; <label><b>space:</b>&nbsp;<input type="text" id="inp_space" value="/" />
-				</label> &nbsp; <label><b>sep:</b>&nbsp;<input type="text" id="inp_sep" value=" " />
-				</label> &nbsp; <input type="button" value="add" onclick="window.add_row(document.getElementById('inp_dot'),
+				<div id="add_row_div" style="display: none;"><label><b>dot:</b>&nbsp;<input type="text" id="inp_dot" />
+				</label>&nbsp;<label><b>dash:</b>&nbsp;<input type="text" id="inp_dash" />
+				</label>&nbsp;<label><b>space:</b>&nbsp;<input type="text" id="inp_space" value="/" />
+				</label>&nbsp;<label><b>sep:</b>&nbsp;<input type="text" id="inp_sep" value=" " />
+				</label> </div><input type="button" value="add row" onclick="window.add_row(document.getElementById('inp_dot'),
                 document.getElementById('inp_dash'), document.getElementById('inp_space'),
-                document.getElementById('inp_sep'));" /> &nbsp;&nbsp;<span>lang:</span>
+                document.getElementById('inp_sep'));" />&nbsp;&nbsp;<span>language:</span>
 				<select onchange="window.set_lang(this.value || this.options[this.selectedIndex].value);">
 					<option value="1">Latin</option>
 					<option value="4">Latin Extended</option>
@@ -38,11 +38,11 @@
 					<option value="10">Japanese</option>
 					<option value="11">Korean</option>
 					<option value="12">Thai</option>
-				</select>
+				</select>&nbsp;&nbsp;<a class="button" href="https://github.com/salif/morse-code-translator">source code</a>
 			</td>
 		</tr>
 	</table>
-	<script type="module" src="./index.js?v=2"></script>
+	<script type="module" src="./index.js?v=2024071201"></script>
 	<style>
 		#main_table {
 			margin: auto;

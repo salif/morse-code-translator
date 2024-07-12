@@ -1,4 +1,4 @@
-import { Ok, Error, toList } from "../gleam.mjs";
+import { Ok, Error, toList, prepend as listPrepend } from "../gleam.mjs";
 import * as $list from "../gleam/list.mjs";
 
 export function is_ok(result) {
@@ -133,14 +133,14 @@ function do_partition(loop$results, loop$oks, loop$errors) {
       let a = results.head[0];
       let rest = results.tail;
       loop$results = rest;
-      loop$oks = toList([a], oks);
+      loop$oks = listPrepend(a, oks);
       loop$errors = errors;
     } else {
       let e = results.head[0];
       let rest = results.tail;
       loop$results = rest;
       loop$oks = oks;
-      loop$errors = toList([e], errors);
+      loop$errors = listPrepend(e, errors);
     }
   }
 }

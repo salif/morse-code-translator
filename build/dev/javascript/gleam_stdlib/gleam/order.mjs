@@ -63,3 +63,23 @@ export function min(a, b) {
 export function reverse(orderer) {
   return (a, b) => { return orderer(b, a); };
 }
+
+export function break_tie(order, other) {
+  if (order instanceof Lt) {
+    return order;
+  } else if (order instanceof Gt) {
+    return order;
+  } else {
+    return other;
+  }
+}
+
+export function lazy_break_tie(order, comparison) {
+  if (order instanceof Lt) {
+    return order;
+  } else if (order instanceof Gt) {
+    return order;
+  } else {
+    return comparison();
+  }
+}

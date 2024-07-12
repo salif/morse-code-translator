@@ -1,8 +1,9 @@
-import gleam/string
-import gleam/list
-import gleam/result
-import gleam/option
 import characters
+import gleam/bool
+import gleam/list
+import gleam/option
+import gleam/result
+import gleam/string
 
 pub const morse_code_list: MorseCodeList = characters.base_characters
 
@@ -80,21 +81,13 @@ pub fn encode(
       case g {
          " " | "\n" | "\r" | "\t" -> Ok(opt_output_space)
          _ -> {
-            let g: String = case opt_is_uppercase {
-               True -> g
-               False -> string.uppercase(g)
-            }
+            let g: String = bool.guard(opt_is_uppercase, g, fn() { string.uppercase(g) })
             case
                list_key_find(option.unwrap(morse_code_dict, morse_code_list), g, opt_language_num)
             {
                Ok(bools) -> {
                   bools
-                  |> list.map(fn(b: Bool) -> String {
-                     case b {
-                        True -> opt_output_dash
-                        False -> opt_output_dot
-                     }
-                  })
+                  |> list.map(bool.guard(_, opt_output_dash, fn() { opt_output_dot }))
                   |> string.join("")
                   |> Ok
                }
@@ -164,12 +157,8 @@ pub fn decode(
                      opt_language_num,
                   )
                {
-                  Ok(value) -> {
-                     case opt_to_uppercase {
-                        True -> Ok(value)
-                        False -> Ok(string.lowercase(value))
-                     }
-                  }
+                  Ok(value) ->
+                     bool.guard(opt_to_uppercase, Ok(value), fn() { Ok(string.lowercase(value)) })
                   Error(_) -> Error(MorseCodeError("Invalid symbol: " <> w))
                }
             })
@@ -201,11 +190,13 @@ fn list_key_find(
       dublic_keys ->
          case list.filter(dublic_keys, fn(key) { key.0 == language_num }) {
             [] ->
-               list.at(dublic_keys, 0)
+               dublic_keys
+               |> list.first
                |> result.map(fn(key) { key.2 })
             [only_lang_key] -> Ok(only_lang_key.2)
             dublic_lang_keys ->
-               list.at(dublic_lang_keys, 0)
+               dublic_lang_keys
+               |> list.first
                |> result.map(fn(key) { key.2 })
          }
    }
@@ -222,11 +213,13 @@ fn list_value_find(
       dublic_values ->
          case list.filter(dublic_values, fn(value) { value.0 == language_num }) {
             [] ->
-               list.at(dublic_values, 0)
+               dublic_values
+               |> list.first
                |> result.map(fn(value) { value.1 })
             [only_lang_value] -> Ok(only_lang_value.1)
             dublic_lang_values ->
-               list.at(dublic_lang_values, 0)
+               dublic_lang_values
+               |> list.first
                |> result.map(fn(value) { value.1 })
          }
    }

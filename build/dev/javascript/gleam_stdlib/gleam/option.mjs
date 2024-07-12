@@ -1,4 +1,11 @@
-import { Ok, Error, toList, CustomType as $CustomType, isEqual } from "../gleam.mjs";
+import {
+  Ok,
+  Error,
+  toList,
+  prepend as listPrepend,
+  CustomType as $CustomType,
+  isEqual,
+} from "../gleam.mjs";
 
 export class Some extends $CustomType {
   constructor(x0) {
@@ -19,7 +26,7 @@ function do_all(list, acc) {
       if (acc instanceof Some && item instanceof Some) {
         let values$1 = acc[0];
         let value = item[0];
-        return new Some(toList([value], values$1));
+        return new Some(listPrepend(value, values$1));
       } else {
         return new None();
       }
@@ -128,7 +135,7 @@ function do_values(list, acc) {
     let accumulate = (acc, item) => {
       if (item instanceof Some) {
         let value = item[0];
-        return toList([value], acc);
+        return listPrepend(value, acc);
       } else {
         return acc;
       }

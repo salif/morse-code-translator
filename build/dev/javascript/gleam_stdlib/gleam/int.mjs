@@ -1,4 +1,12 @@
-import { Ok, Error, toList, CustomType as $CustomType, remainderInt, divideInt } from "../gleam.mjs";
+import {
+  Ok,
+  Error,
+  toList,
+  prepend as listPrepend,
+  CustomType as $CustomType,
+  remainderInt,
+  divideInt,
+} from "../gleam.mjs";
 import * as $float from "../gleam/float.mjs";
 import * as $order from "../gleam/order.mjs";
 import {
@@ -193,11 +201,11 @@ function do_digits(loop$x, loop$base, loop$acc) {
     let acc = loop$acc;
     let $ = absolute_value(x) < base;
     if ($) {
-      return toList([x], acc);
+      return listPrepend(x, acc);
     } else {
       loop$x = divideInt(x, base);
       loop$base = base;
-      loop$acc = toList([remainderInt(x, base)], acc);
+      loop$acc = listPrepend(remainderInt(x, base), acc);
     }
   }
 }
@@ -218,7 +226,7 @@ function do_undigits(loop$numbers, loop$base, loop$acc) {
     let acc = loop$acc;
     if (numbers.hasLength(0)) {
       return new Ok(acc);
-    } else if (numbers.atLeastLength(1) && numbers.head >= base) {
+    } else if (numbers.atLeastLength(1) && (numbers.head >= base)) {
       let digit = numbers.head;
       return new Error(new InvalidBase());
     } else {

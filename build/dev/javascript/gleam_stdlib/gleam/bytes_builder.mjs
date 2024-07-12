@@ -1,4 +1,4 @@
-import { toList, CustomType as $CustomType } from "../gleam.mjs";
+import { toList, prepend as listPrepend, CustomType as $CustomType } from "../gleam.mjs";
 import * as $bit_array from "../gleam/bit_array.mjs";
 import * as $list from "../gleam/list.mjs";
 import * as $string_builder from "../gleam/string_builder.mjs";
@@ -27,7 +27,7 @@ class Many extends $CustomType {
 export function append_builder(first, second) {
   if (second instanceof Many) {
     let builders = second[0];
-    return new Many(toList([first], builders));
+    return new Many(listPrepend(first, builders));
   } else {
     return new Many(toList([first, second]));
   }
@@ -95,8 +95,8 @@ function to_list(loop$stack, loop$acc) {
       let bits = stack.head.head[0];
       let rest = stack.head.tail;
       let remaining_stack = stack.tail;
-      loop$stack = toList([rest], remaining_stack);
-      loop$acc = toList([bits], acc);
+      loop$stack = listPrepend(rest, remaining_stack);
+      loop$acc = listPrepend(bits, acc);
     } else if (stack.atLeastLength(1) &&
     stack.head.atLeastLength(1) &&
     stack.head.head instanceof Text) {
@@ -104,13 +104,13 @@ function to_list(loop$stack, loop$acc) {
       let rest = stack.head.tail;
       let remaining_stack = stack.tail;
       let bits = $bit_array.from_string($string_builder.to_string(builder));
-      loop$stack = toList([rest], remaining_stack);
-      loop$acc = toList([bits], acc);
+      loop$stack = listPrepend(rest, remaining_stack);
+      loop$acc = listPrepend(bits, acc);
     } else {
       let builders = stack.head.head[0];
       let rest = stack.head.tail;
       let remaining_stack = stack.tail;
-      loop$stack = toList([builders, rest], remaining_stack);
+      loop$stack = listPrepend(builders, listPrepend(rest, remaining_stack));
       loop$acc = acc;
     }
   }

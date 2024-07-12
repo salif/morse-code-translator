@@ -1,3 +1,4 @@
+import * as $bool from "../gleam_stdlib/gleam/bool.mjs";
 import * as $list from "../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../gleam_stdlib/gleam/result.mjs";
@@ -64,15 +65,17 @@ function list_key_find(keys, desired_key, language_num) {
       (key) => { return key[0] === language_num; },
     );
     if ($1.hasLength(0)) {
-      let _pipe = $list.at(dublic_keys, 0);
-      return $result.map(_pipe, (key) => { return key[2]; });
+      let _pipe = dublic_keys;
+      let _pipe$1 = $list.first(_pipe);
+      return $result.map(_pipe$1, (key) => { return key[2]; });
     } else if ($1.hasLength(1)) {
       let only_lang_key = $1.head;
       return new Ok(only_lang_key[2]);
     } else {
       let dublic_lang_keys = $1;
-      let _pipe = $list.at(dublic_lang_keys, 0);
-      return $result.map(_pipe, (key) => { return key[2]; });
+      let _pipe = dublic_lang_keys;
+      let _pipe$1 = $list.first(_pipe);
+      return $result.map(_pipe$1, (key) => { return key[2]; });
     }
   }
 }
@@ -91,15 +94,17 @@ function list_value_find(values, desired_value, language_num) {
       (value) => { return value[0] === language_num; },
     );
     if ($1.hasLength(0)) {
-      let _pipe = $list.at(dublic_values, 0);
-      return $result.map(_pipe, (value) => { return value[1]; });
+      let _pipe = dublic_values;
+      let _pipe$1 = $list.first(_pipe);
+      return $result.map(_pipe$1, (value) => { return value[1]; });
     } else if ($1.hasLength(1)) {
       let only_lang_value = $1.head;
       return new Ok(only_lang_value[1]);
     } else {
       let dublic_lang_values = $1;
-      let _pipe = $list.at(dublic_lang_values, 0);
-      return $result.map(_pipe, (value) => { return value[1]; });
+      let _pipe = dublic_lang_values;
+      let _pipe$1 = $list.first(_pipe);
+      return $result.map(_pipe$1, (value) => { return value[1]; });
     }
   }
 }
@@ -189,13 +194,11 @@ export function encode(input, options, morse_code_dict) {
       } else if (g === "\t") {
         return new Ok(opt_output_space);
       } else {
-        let g$1 = (() => {
-          if (opt_is_uppercase) {
-            return g;
-          } else {
-            return $string.uppercase(g);
-          }
-        })();
+        let g$1 = $bool.guard(
+          opt_is_uppercase,
+          g,
+          () => { return $string.uppercase(g); },
+        );
         let $ = list_key_find(
           $option.unwrap(morse_code_dict, morse_code_list),
           g$1,
@@ -206,12 +209,12 @@ export function encode(input, options, morse_code_dict) {
           let _pipe$2 = bools;
           let _pipe$3 = $list.map(
             _pipe$2,
-            (b) => {
-              if (b) {
-                return opt_output_dash;
-              } else {
-                return opt_output_dot;
-              }
+            (_capture) => {
+              return $bool.guard(
+                _capture,
+                opt_output_dash,
+                () => { return opt_output_dot; },
+              );
             },
           );
           let _pipe$4 = $string.join(_pipe$3, "");
@@ -293,11 +296,11 @@ export function decode(input, options, morse_code_dict) {
             );
             if ($1.isOk()) {
               let value = $1[0];
-              if (opt_to_uppercase) {
-                return new Ok(value);
-              } else {
-                return new Ok($string.lowercase(value));
-              }
+              return $bool.guard(
+                opt_to_uppercase,
+                new Ok(value),
+                () => { return new Ok($string.lowercase(value)); },
+              );
             } else {
               return new Error(new MorseCodeError("Invalid symbol: " + w));
             }

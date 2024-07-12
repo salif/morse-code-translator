@@ -1,4 +1,4 @@
-import { Error, toList, isEqual } from "../gleam.mjs";
+import { Error, toList, prepend as listPrepend, isEqual } from "../gleam.mjs";
 import * as $option from "../gleam/option.mjs";
 import {
   map_size as size,
@@ -13,6 +13,10 @@ export { size, to_list };
 
 export function new$() {
   return do_new();
+}
+
+export function is_empty(dict) {
+  return isEqual(dict, new$());
 }
 
 export function get(from, get) {
@@ -60,7 +64,7 @@ function reverse_and_concat(loop$remaining, loop$accumulator) {
       let item = remaining.head;
       let rest = remaining.tail;
       loop$remaining = rest;
-      loop$accumulator = toList([item], accumulator);
+      loop$accumulator = listPrepend(item, accumulator);
     }
   }
 }
@@ -75,7 +79,7 @@ function do_keys_acc(loop$list, loop$acc) {
       let x = list.head;
       let xs = list.tail;
       loop$list = xs;
-      loop$acc = toList([x[0]], acc);
+      loop$acc = listPrepend(x[0], acc);
     }
   }
 }
@@ -99,7 +103,7 @@ function do_values_acc(loop$list, loop$acc) {
       let x = list.head;
       let xs = list.tail;
       loop$list = xs;
-      loop$acc = toList([x[1]], acc);
+      loop$acc = listPrepend(x[1], acc);
     }
   }
 }
@@ -195,12 +199,16 @@ export function drop(loop$dict, loop$disallowed_keys) {
   }
 }
 
-export function update(dict, key, fun) {
+export function upsert(dict, key, fun) {
   let _pipe = dict;
   let _pipe$1 = get(_pipe, key);
   let _pipe$2 = $option.from_result(_pipe$1);
   let _pipe$3 = fun(_pipe$2);
   return ((_capture) => { return insert(dict, key, _capture); })(_pipe$3);
+}
+
+export function update(dict, key, fun) {
+  return upsert(dict, key, fun);
 }
 
 function do_fold(loop$list, loop$initial, loop$fun) {
@@ -252,4 +260,31 @@ function do_filter(f, dict) {
 
 export function filter(dict, predicate) {
   return do_filter(predicate, dict);
+}
+
+export function each(dict, fun) {
+  return fold(
+    dict,
+    undefined,
+    (nil, k, v) => {
+      fun(k, v);
+      return nil;
+    },
+  );
+}
+
+export function combine(dict, other, fun) {
+  return fold(
+    dict,
+    other,
+    (acc, key, value) => {
+      let $ = get(acc, key);
+      if ($.isOk()) {
+        let other_value = $[0];
+        return insert(acc, key, fun(value, other_value));
+      } else {
+        return insert(acc, key, value);
+      }
+    },
+  );
 }

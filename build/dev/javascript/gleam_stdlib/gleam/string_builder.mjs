@@ -1,4 +1,4 @@
-import { toList, isEqual } from "../gleam.mjs";
+import { toList, CustomType as $CustomType, isEqual } from "../gleam.mjs";
 import * as $list from "../gleam/list.mjs";
 import {
   add as do_append,
@@ -11,9 +11,12 @@ import {
   uppercase as do_uppercase,
   graphemes as do_to_graphemes,
   split as do_split,
-  string_replace as do_replace,
-  equal as do_is_equal,
+  string_replace as replace,
 } from "../gleam_stdlib.mjs";
+
+export { replace };
+
+class All extends $CustomType {}
 
 export function prepend_builder(builder, prefix) {
   return do_append(prefix, builder);
@@ -85,18 +88,10 @@ export function split(iodata, pattern) {
   return do_split(iodata, pattern);
 }
 
-export function replace(builder, pattern, substitute) {
-  return do_replace(builder, pattern, substitute);
-}
-
 export function is_equal(a, b) {
-  return do_is_equal(a, b);
-}
-
-function do_is_empty(builder) {
-  return isEqual(from_string(""), builder);
+  return isEqual(a, b);
 }
 
 export function is_empty(builder) {
-  return do_is_empty(builder);
+  return isEqual(from_string(""), builder);
 }
