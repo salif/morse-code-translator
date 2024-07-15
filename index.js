@@ -73,6 +73,31 @@ function oninp(this_inp, skip_abc) {
 	}
 }
 
+function set_element_language(d, dlo, lang) {
+	try {
+		const dp = JSON.parse(dlo)
+		if (!dp.hasOwnProperty(lang)) {
+			lang = "en"
+		}
+		switch (dp.type) {
+			case 1: d.textContent = dp[lang]; break;
+			case 2: d.textContent = dp[lang]; break;
+			case 3: d.value = dp[lang]; break;
+			case 4: d.placeholder = dp[lang]; break;
+			default: console.warn(dp); break;
+		}
+	} catch (err) {
+		console.error(err)
+	}
+}
+
+function set_page_language(lang) {
+	document.documentElement.lang = lang
+	document.querySelectorAll('[data-lo]').forEach(d => {
+		set_element_language(d, d.dataset.lo, lang)
+	})
+}
+
 function escapeHtml(unsafe) {
 	return unsafe.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll(
 		'>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;')
@@ -80,24 +105,28 @@ function escapeHtml(unsafe) {
 
 function main_table_add_row(fn_oninput, options) {
 	const new_row = window.main_table.insertRow(0)
-	new_row.insertCell(0).innerHTML = "<span>" +
-		escapeHtml(options.str_dot + options.str_dash) + "</span>"
+	const new_row_span = document.createElement("span")
+	new_row_span.textContent = options.str_dot + options.str_dash
+	new_row.insertCell(0).appendChild(new_row_span)
 	const new_cell = new_row.insertCell(1)
 	new_cell.style.width = "100%"
 	const el_text_area = document.createElement("textarea")
 	el_text_area.rows = "5"
 	el_text_area.style.width = "100%"
-	el_text_area.placeholder = "enter"
+	el_text_area.dataset.lo = "{\"type\": 4, \"en\": \"enter code\", \"ru\": \"введите код\", \"bg\": \"въведете код\"}"
 	options.el = el_text_area
 	el_text_area.oninput = function () {
 		fn_oninput(options)
 	}
 	new_cell.appendChild(el_text_area)
 	if (options.str_dot === "abc" || options.str_dash === "") {
+		new_row_span.dataset.lo = "{\"type\": 1, \"en\": \"abc\", \"ru\": \"абв\", \"bg\": \"абв\"}"
+		el_text_area.dataset.lo = "{\"type\": 4, \"en\": \"enter text\", \"ru\": \"введите текст\", \"bg\": \"въведете текст\"}"
 		window.input_abc = options
 	} else {
 		window.inputs.push(options)
 	}
+	set_element_language(el_text_area, el_text_area.dataset.lo, document.documentElement.lang)
 }
 
 document.body.onload = function () {
@@ -111,11 +140,16 @@ document.body.onload = function () {
 	window.set_lang = set_lang
 	window.add_row = add_row
 
-	main_table_add_row(oninp, { str_dot: ".", str_dash: ",", str_sp: "/", str_sep: " " })
 	main_table_add_row(oninp, { str_dot: "•", str_dash: "−", str_sp: "/", str_sep: " " })
-	main_table_add_row(oninp, { str_dot: "0", str_dash: "1", str_sp: "/", str_sep: " " })
 	main_table_add_row(oninp, { str_dot: ".", str_dash: "-", str_sp: "/", str_sep: " " })
 	main_table_add_row(oninp, { str_dot: "abc", str_dash: "", str_sp: "/", str_sep: " " })
+
+	window.set_page_language = set_page_language
+	switch (navigator.language || navigator.userLanguage) {
+		case "ru": set_page_language("ru"); break;
+		case "bg": set_page_language("bg"); break;
+	}
+
 	// focus first textarea
 	window.input_abc.el.focus()
 }
