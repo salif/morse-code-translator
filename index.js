@@ -80,6 +80,7 @@ function set_element_language(d, dlo, lang) {
 			lang = "en"
 		}
 		switch (dp.type) {
+			case 0: window.document.title = dp[lang]; break;
 			case 1: d.textContent = dp[lang]; break;
 			case 2: d.textContent = dp[lang]; break;
 			case 3: d.value = dp[lang]; break;
@@ -96,6 +97,7 @@ function set_page_language(lang) {
 	document.querySelectorAll('[data-lo]').forEach(d => {
 		set_element_language(d, d.dataset.lo, lang)
 	})
+	set_element_language(null, '{"type": 0, "en": "Morse Code Translator", "ru": "Переводчик Азбуки Морзе", "bg": "Преводач на морзова азбука"}', lang)
 }
 
 function escapeHtml(unsafe) {
@@ -113,15 +115,15 @@ function main_table_add_row(fn_oninput, options) {
 	const el_text_area = document.createElement("textarea")
 	el_text_area.rows = "5"
 	el_text_area.style.width = "100%"
-	el_text_area.dataset.lo = "{\"type\": 4, \"en\": \"enter code\", \"ru\": \"введите код\", \"bg\": \"въведете код\"}"
+	el_text_area.dataset.lo = '{"type": 4, "en": "enter code", "ru": "введите код", "bg": "въведете код"}'
 	options.el = el_text_area
 	el_text_area.oninput = function () {
 		fn_oninput(options)
 	}
 	new_cell.appendChild(el_text_area)
 	if (options.str_dot === "abc" || options.str_dash === "") {
-		new_row_span.dataset.lo = "{\"type\": 1, \"en\": \"abc\", \"ru\": \"абв\", \"bg\": \"абв\"}"
-		el_text_area.dataset.lo = "{\"type\": 4, \"en\": \"enter text\", \"ru\": \"введите текст\", \"bg\": \"въведете текст\"}"
+		new_row_span.dataset.lo = '{"type": 1, "en": "abc", "ru": "абв", "bg": "абв"}'
+		el_text_area.dataset.lo = '{"type": 4, "en": "enter text", "ru": "введите текст", "bg": "въведете текст"}'
 		window.input_abc = options
 	} else {
 		window.inputs.push(options)
