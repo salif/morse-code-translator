@@ -3,28 +3,24 @@ root = true
 [*]
 charset = utf-8
 end_of_line = lf
-trim_trailing_whitespace = true
 insert_final_newline = true
 
 [*.gleam]
 indent_style = space
 indent_size = 3
-max_line_length = 100
+max_line_length = 80
+trim_trailing_whitespace = true
+
+[*.{html,js}]
+indent_style = tab
+indent_size = 4
+max_line_length = 80
+trim_trailing_whitespace = true
 
 [*.md]
 trim_trailing_whitespace = false
 indent_style = space
 max_line_length = 80
-
-[*.html]
-indent_style = tab
-indent_size = 4
-max_line_length = 100
-
-[*.js]
-indent_style = tab
-indent_size = 4
-max_line_length = 100
 
 [{LICENSE,*.min.css,robots.txt,manifest.toml}]
 end_of_line = unset
