@@ -1,5 +1,4 @@
 import characters
-import gleam/bool
 import gleam/list
 import gleam/option
 import gleam/result
@@ -69,11 +68,16 @@ pub fn encode(
    morse_code_dict: option.Option(MorseCodeList),
 ) -> Result(String, MorseCodeError) {
    let opt_output_dot: String = option.unwrap(options.output_dot, default_dot)
-   let opt_output_dash: String = option.unwrap(options.output_dash, default_dash)
-   let opt_output_space: String = option.unwrap(options.output_space, default_space)
-   let opt_output_separator: String = option.unwrap(options.output_separator, default_separator)
-   let opt_is_uppercase: Bool = option.unwrap(options.is_uppercase, default_is_uppercase)
-   let opt_language_num: String = option.unwrap(options.language_num, default_language_num)
+   let opt_output_dash: String =
+      option.unwrap(options.output_dash, default_dash)
+   let opt_output_space: String =
+      option.unwrap(options.output_space, default_space)
+   let opt_output_separator: String =
+      option.unwrap(options.output_separator, default_separator)
+   let opt_is_uppercase: Bool =
+      option.unwrap(options.is_uppercase, default_is_uppercase)
+   let opt_language_num: String =
+      option.unwrap(options.language_num, default_language_num)
 
    input
    |> string.to_graphemes
@@ -81,13 +85,17 @@ pub fn encode(
       case g {
          " " | "\n" | "\r" | "\t" -> Ok(opt_output_space)
          _ -> {
-            let g: String = bool.guard(opt_is_uppercase, g, fn() { string.uppercase(g) })
+            let g: String = if_(opt_is_uppercase, g, string.uppercase(g))
             case
-               list_key_find(option.unwrap(morse_code_dict, morse_code_list), g, opt_language_num)
+               list_key_find(
+                  option.unwrap(morse_code_dict, morse_code_list),
+                  g,
+                  opt_language_num,
+               )
             {
                Ok(bools) -> {
                   bools
-                  |> list.map(bool.guard(_, opt_output_dash, fn() { opt_output_dot }))
+                  |> list.map(if_(_, opt_output_dash, opt_output_dot))
                   |> string.join("")
                   |> Ok
                }
@@ -128,10 +136,14 @@ pub fn decode(
 ) -> Result(String, MorseCodeError) {
    let opt_input_dot: String = option.unwrap(options.input_dot, default_dot)
    let opt_input_dash: String = option.unwrap(options.input_dash, default_dash)
-   let opt_input_space: String = option.unwrap(options.input_space, default_space)
-   let opt_input_separator: String = option.unwrap(options.input_separator, default_separator)
-   let opt_to_uppercase: Bool = option.unwrap(options.to_uppercase, default_to_uppercase)
-   let opt_language_num: String = option.unwrap(options.language_num, default_language_num)
+   let opt_input_space: String =
+      option.unwrap(options.input_space, default_space)
+   let opt_input_separator: String =
+      option.unwrap(options.input_separator, default_separator)
+   let opt_to_uppercase: Bool =
+      option.unwrap(options.to_uppercase, default_to_uppercase)
+   let opt_language_num: String =
+      option.unwrap(options.language_num, default_language_num)
 
    input
    |> string.split(opt_input_separator)
@@ -149,7 +161,10 @@ pub fn decode(
                   _ -> Error(MorseCodeError("Invalid morse code symbol: " <> g))
                }
             })
-            |> result.try(fn(bools: List(Bool)) -> Result(String, MorseCodeError) {
+            |> result.try(fn(bools: List(Bool)) -> Result(
+               String,
+               MorseCodeError,
+            ) {
                case
                   list_value_find(
                      option.unwrap(morse_code_dict, morse_code_list),
@@ -158,7 +173,11 @@ pub fn decode(
                   )
                {
                   Ok(value) ->
-                     bool.guard(opt_to_uppercase, Ok(value), fn() { Ok(string.lowercase(value)) })
+                     if_(
+                        opt_to_uppercase,
+                        Ok(value),
+                        Ok(string.lowercase(value)),
+                     )
                   Error(_) -> Error(MorseCodeError("Invalid symbol: " <> w))
                }
             })
@@ -211,7 +230,9 @@ fn list_value_find(
       [] -> Error(Nil)
       [only_value] -> Ok(only_value.1)
       dublic_values ->
-         case list.filter(dublic_values, fn(value) { value.0 == language_num }) {
+         case
+            list.filter(dublic_values, fn(value) { value.0 == language_num })
+         {
             [] ->
                dublic_values
                |> list.first
@@ -238,7 +259,10 @@ pub type ConvertOptions {
    )
 }
 
-pub fn convert(input: String, options: ConvertOptions) -> Result(String, MorseCodeError) {
+pub fn convert(
+   input: String,
+   options: ConvertOptions,
+) -> Result(String, MorseCodeError) {
    input
    |> string.to_graphemes
    |> list.try_map(fn(g: String) -> Result(String, MorseCodeError) {
@@ -257,5 +281,12 @@ pub fn convert_to_string(input: String, options: ConvertOptions) -> String {
    case convert(input, options) {
       Ok(value) -> value
       Error(value) -> value.msg
+   }
+}
+
+fn if_(condition: Bool, if_true: a, if_false: a) -> a {
+   case condition {
+      True -> if_true
+      False -> if_false
    }
 }

@@ -6,8 +6,8 @@
 ## Links
 
 * [Homepage](https://salif.github.io/morse-code-translator/)
-* [Source code \(Github\)](https://github.com/salif/morse-code-translator)
-* [Source code \(Codeberg\)](https://codeberg.org/salif/morse-code-translator)
+* [Source code](https://codeberg.org/salif/morse-code-translator)
+* [Discussions (Github)](https://github.com/salif/morse-code-translator/discussions)
 
 ## Usage
 
@@ -98,5 +98,5 @@ Further documentation can be found at <https://hexdocs.pm/morse_code_translator>
 ## Development
 
 ```sh
-gleam build
+just build
 ```

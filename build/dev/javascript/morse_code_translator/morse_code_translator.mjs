@@ -1,4 +1,3 @@
-import * as $bool from "../gleam_stdlib/gleam/bool.mjs";
 import * as $list from "../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../gleam_stdlib/gleam/result.mjs";
@@ -146,6 +145,14 @@ export function convert_to_string(input, options) {
   }
 }
 
+function if_(condition, if_true, if_false) {
+  if (condition) {
+    return if_true;
+  } else {
+    return if_false;
+  }
+}
+
 export const morse_code_list = $characters.base_characters;
 
 export const default_dot = ".";
@@ -194,11 +201,7 @@ export function encode(input, options, morse_code_dict) {
       } else if (g === "\t") {
         return new Ok(opt_output_space);
       } else {
-        let g$1 = $bool.guard(
-          opt_is_uppercase,
-          g,
-          () => { return $string.uppercase(g); },
-        );
+        let g$1 = if_(opt_is_uppercase, g, $string.uppercase(g));
         let $ = list_key_find(
           $option.unwrap(morse_code_dict, morse_code_list),
           g$1,
@@ -210,11 +213,7 @@ export function encode(input, options, morse_code_dict) {
           let _pipe$3 = $list.map(
             _pipe$2,
             (_capture) => {
-              return $bool.guard(
-                _capture,
-                opt_output_dash,
-                () => { return opt_output_dot; },
-              );
+              return if_(_capture, opt_output_dash, opt_output_dot);
             },
           );
           let _pipe$4 = $string.join(_pipe$3, "");
@@ -296,10 +295,10 @@ export function decode(input, options, morse_code_dict) {
             );
             if ($1.isOk()) {
               let value = $1[0];
-              return $bool.guard(
+              return if_(
                 opt_to_uppercase,
                 new Ok(value),
-                () => { return new Ok($string.lowercase(value)); },
+                new Ok($string.lowercase(value)),
               );
             } else {
               return new Error(new MorseCodeError("Invalid symbol: " + w));
