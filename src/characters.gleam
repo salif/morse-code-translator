@@ -1,3 +1,5 @@
+// Do not format
+// See `../morse-decoder.md`
 pub const base_characters: List(#(String, String, List(Bool))) = [
    #("1", "A", [False, True]),
    #("1", "B", [True, False, False, False]),

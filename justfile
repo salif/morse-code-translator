@@ -1,6 +1,4 @@
-#!/usr/bin/just -f
-
-files := ""
+#!/usr/bin/env -S just -f
 
 _:
 	@just --list
@@ -10,10 +8,10 @@ build:
 
 format:
 	gleam format ./src/morse_code_translator.gleam
-	just files="./src/morse_code_translator.gleam" format-js
+	just format-js ./src/morse_code_translator.gleam
 
 [private]
-format-js:
+format-js files:
 	#!/usr/bin/env node
 	const fs = require('fs');
 	"{{ files }}".split(";").forEach(f => {
@@ -22,6 +20,13 @@ format-js:
 			fs.writeFileSync(f, input.replace(/(?!\n)(  )(?=\D*)/g, "   "));
 		}
 	})
+
+[private]
+build-ifn:
+	@if ! test -d build/dev/javascript/morse_code_translator; then just build; fi
+
+serve port='8080': build-ifn
+	python3 -m http.server {{port}}
 
 [confirm]
 gh-pages:

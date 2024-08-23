@@ -12,27 +12,34 @@ export class MorseCodeError extends $CustomType {
   }
 }
 
+export class Language extends $CustomType {
+  constructor(num) {
+    super();
+    this.num = num;
+  }
+}
+
 export class EncodeOptions extends $CustomType {
-  constructor(output_dot, output_dash, output_space, output_separator, is_uppercase, language_num) {
+  constructor(output_dot, output_dash, output_space, output_separator, is_uppercase, language) {
     super();
     this.output_dot = output_dot;
     this.output_dash = output_dash;
     this.output_space = output_space;
     this.output_separator = output_separator;
     this.is_uppercase = is_uppercase;
-    this.language_num = language_num;
+    this.language = language;
   }
 }
 
 export class DecodeOptions extends $CustomType {
-  constructor(input_dot, input_dash, input_space, input_separator, to_uppercase, language_num) {
+  constructor(input_dot, input_dash, input_space, input_separator, to_uppercase, language) {
     super();
     this.input_dot = input_dot;
     this.input_dash = input_dash;
     this.input_space = input_space;
     this.input_separator = input_separator;
     this.to_uppercase = to_uppercase;
-    this.language_num = language_num;
+    this.language = language;
   }
 }
 
@@ -50,7 +57,7 @@ export class ConvertOptions extends $CustomType {
   }
 }
 
-function list_key_find(keys, desired_key, language_num) {
+function list_key_find(keys, desired_key, language) {
   let $ = $list.filter(keys, (k) => { return k[1] === desired_key; });
   if ($.hasLength(0)) {
     return new Error(undefined);
@@ -59,10 +66,7 @@ function list_key_find(keys, desired_key, language_num) {
     return new Ok(only_key[2]);
   } else {
     let dublic_keys = $;
-    let $1 = $list.filter(
-      dublic_keys,
-      (key) => { return key[0] === language_num; },
-    );
+    let $1 = $list.filter(dublic_keys, (key) => { return key[0] === language; });
     if ($1.hasLength(0)) {
       let _pipe = dublic_keys;
       let _pipe$1 = $list.first(_pipe);
@@ -79,7 +83,7 @@ function list_key_find(keys, desired_key, language_num) {
   }
 }
 
-function list_value_find(values, desired_value, language_num) {
+function list_value_find(values, desired_value, language) {
   let $ = $list.filter(values, (v) => { return isEqual(v[2], desired_value); });
   if ($.hasLength(0)) {
     return new Error(undefined);
@@ -90,7 +94,7 @@ function list_value_find(values, desired_value, language_num) {
     let dublic_values = $;
     let $1 = $list.filter(
       dublic_values,
-      (value) => { return value[0] === language_num; },
+      (value) => { return value[0] === language; },
     );
     if ($1.hasLength(0)) {
       let _pipe = dublic_values;
@@ -167,9 +171,9 @@ export const default_is_uppercase = false;
 
 export const default_to_uppercase = false;
 
-export const language_num_latin = "1";
+export const language_latin = /* @__PURE__ */ new Language("1");
 
-export const default_language_num = language_num_latin;
+export const default_language = language_latin;
 
 export function encode(input, options, morse_code_dict) {
   let opt_output_dot = $option.unwrap(options.output_dot, default_dot);
@@ -183,10 +187,7 @@ export function encode(input, options, morse_code_dict) {
     options.is_uppercase,
     default_is_uppercase,
   );
-  let opt_language_num = $option.unwrap(
-    options.language_num,
-    default_language_num,
-  );
+  let opt_language = $option.unwrap(options.language, default_language).num;
   let _pipe = input;
   let _pipe$1 = $string.to_graphemes(_pipe);
   let _pipe$2 = $list.try_map(
@@ -205,7 +206,7 @@ export function encode(input, options, morse_code_dict) {
         let $ = list_key_find(
           $option.unwrap(morse_code_dict, morse_code_list),
           g$1,
-          opt_language_num,
+          opt_language,
         );
         if ($.isOk()) {
           let bools = $[0];
@@ -253,10 +254,7 @@ export function decode(input, options, morse_code_dict) {
     options.to_uppercase,
     default_to_uppercase,
   );
-  let opt_language_num = $option.unwrap(
-    options.language_num,
-    default_language_num,
-  );
+  let opt_language = $option.unwrap(options.language, default_language).num;
   let _pipe = input;
   let _pipe$1 = $string.split(_pipe, opt_input_separator);
   let _pipe$2 = $list.try_map(
@@ -291,7 +289,7 @@ export function decode(input, options, morse_code_dict) {
             let $1 = list_value_find(
               $option.unwrap(morse_code_dict, morse_code_list),
               bools,
-              opt_language_num,
+              opt_language,
             );
             if ($1.isOk()) {
               let value = $1[0];
@@ -325,24 +323,24 @@ export function decode_to_string(input, options, morse_code_dict) {
   }
 }
 
-export const language_num_numbers = "2";
+export const language_numbers = /* @__PURE__ */ new Language("2");
 
-export const language_num_punctuation = "3";
+export const language_punctuation = /* @__PURE__ */ new Language("3");
 
-export const language_num_latin_extended = "4";
+export const language_latin_extended = /* @__PURE__ */ new Language("4");
 
-export const language_num_cyrillic = "5";
+export const language_cyrillic = /* @__PURE__ */ new Language("5");
 
-export const language_num_greek = "6";
+export const language_greek = /* @__PURE__ */ new Language("6");
 
-export const language_num_hebrew = "7";
+export const language_hebrew = /* @__PURE__ */ new Language("7");
 
-export const language_num_arabic = "8";
+export const language_arabic = /* @__PURE__ */ new Language("8");
 
-export const language_num_persian = "9";
+export const language_persian = /* @__PURE__ */ new Language("9");
 
-export const language_num_japanese = "10";
+export const language_japanese = /* @__PURE__ */ new Language("10");
 
-export const language_num_korean = "11";
+export const language_korean = /* @__PURE__ */ new Language("11");
 
-export const language_num_thai = "12";
+export const language_thai = /* @__PURE__ */ new Language("12");

@@ -14,41 +14,60 @@ pub const default_space: String = "/"
 
 pub const default_separator: String = " "
 
-pub const default_language_num: String = language_num_latin
+/// Default language is ASCII
+pub const default_language: Language = language_latin
 
+/// Input will be converted to uppercase
 pub const default_is_uppercase: Bool = False
 
+/// Output will be converted to lowercase
 pub const default_to_uppercase: Bool = False
 
-pub const language_num_latin: String = "1"
+/// ASCII
+pub const language_latin = Language("1")
 
-pub const language_num_numbers: String = "2"
+/// Numbers
+pub const language_numbers = Language("2")
 
-pub const language_num_punctuation: String = "3"
+/// Punctuation
+pub const language_punctuation = Language("3")
 
-pub const language_num_latin_extended: String = "4"
+/// Latin Extended (Turkish, Polish etc.)
+pub const language_latin_extended = Language("4")
 
-pub const language_num_cyrillic: String = "5"
+/// Cyrillic languages
+pub const language_cyrillic = Language("5")
 
-pub const language_num_greek: String = "6"
+/// Greek
+pub const language_greek = Language("6")
 
-pub const language_num_hebrew: String = "7"
+/// Hebrew
+pub const language_hebrew = Language("7")
 
-pub const language_num_arabic: String = "8"
+/// Arabic
+pub const language_arabic = Language("8")
 
-pub const language_num_persian: String = "9"
+/// Persian
+pub const language_persian = Language("9")
 
-pub const language_num_japanese: String = "10"
+/// Japanese
+pub const language_japanese = Language("10")
 
-pub const language_num_korean: String = "11"
+/// Korean
+pub const language_korean = Language("11")
 
-pub const language_num_thai: String = "12"
+/// Thai
+pub const language_thai = Language("12")
 
 pub type MorseCodeList =
    List(#(String, String, List(Bool)))
 
 pub type MorseCodeError {
    MorseCodeError(msg: String)
+}
+
+pub type Language {
+   Language(num: String)
 }
 
 pub type EncodeOptions {
@@ -58,7 +77,7 @@ pub type EncodeOptions {
       output_space: option.Option(String),
       output_separator: option.Option(String),
       is_uppercase: option.Option(Bool),
-      language_num: option.Option(String),
+      language: option.Option(Language),
    )
 }
 
@@ -76,8 +95,8 @@ pub fn encode(
       option.unwrap(options.output_separator, default_separator)
    let opt_is_uppercase: Bool =
       option.unwrap(options.is_uppercase, default_is_uppercase)
-   let opt_language_num: String =
-      option.unwrap(options.language_num, default_language_num)
+   let opt_language: String =
+      option.unwrap(options.language, default_language).num
 
    input
    |> string.to_graphemes
@@ -90,7 +109,7 @@ pub fn encode(
                list_key_find(
                   option.unwrap(morse_code_dict, morse_code_list),
                   g,
-                  opt_language_num,
+                  opt_language,
                )
             {
                Ok(bools) -> {
@@ -125,7 +144,7 @@ pub type DecodeOptions {
       input_space: option.Option(String),
       input_separator: option.Option(String),
       to_uppercase: option.Option(Bool),
-      language_num: option.Option(String),
+      language: option.Option(Language),
    )
 }
 
@@ -142,8 +161,8 @@ pub fn decode(
       option.unwrap(options.input_separator, default_separator)
    let opt_to_uppercase: Bool =
       option.unwrap(options.to_uppercase, default_to_uppercase)
-   let opt_language_num: String =
-      option.unwrap(options.language_num, default_language_num)
+   let opt_language: String =
+      option.unwrap(options.language, default_language).num
 
    input
    |> string.split(opt_input_separator)
@@ -169,7 +188,7 @@ pub fn decode(
                   list_value_find(
                      option.unwrap(morse_code_dict, morse_code_list),
                      bools,
-                     opt_language_num,
+                     opt_language,
                   )
                {
                   Ok(value) ->
@@ -201,13 +220,13 @@ pub fn decode_to_string(
 fn list_key_find(
    keys: MorseCodeList,
    desired_key: String,
-   language_num: String,
+   language: String,
 ) -> Result(List(Bool), Nil) {
    case list.filter(keys, fn(k) { k.1 == desired_key }) {
       [] -> Error(Nil)
       [only_key] -> Ok(only_key.2)
       dublic_keys ->
-         case list.filter(dublic_keys, fn(key) { key.0 == language_num }) {
+         case list.filter(dublic_keys, fn(key) { key.0 == language }) {
             [] ->
                dublic_keys
                |> list.first
@@ -224,15 +243,13 @@ fn list_key_find(
 fn list_value_find(
    values: MorseCodeList,
    desired_value: List(Bool),
-   language_num: String,
+   language: String,
 ) -> Result(String, Nil) {
    case list.filter(values, fn(v) { v.2 == desired_value }) {
       [] -> Error(Nil)
       [only_value] -> Ok(only_value.1)
       dublic_values ->
-         case
-            list.filter(dublic_values, fn(value) { value.0 == language_num })
-         {
+         case list.filter(dublic_values, fn(value) { value.0 == language }) {
             [] ->
                dublic_values
                |> list.first
