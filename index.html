@@ -3,16 +3,13 @@
 
 <head>
 	<meta charset="UTF-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta name="viewport"
-		content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 	<title>Morse Code Translator</title>
 	<meta name="description"
 		content="Morse Code encoder, decoder, converter for Latin, Cyrillic, Greek, Hebrew, Arabic, Persian, Japanese, Korean, Thai" />
 	<meta name="robots" content="index, follow" />
 	<meta name="author" content="Salif Mehmed" />
-	<link rel="canonical"
-		href="https://salif.github.io/morse-code-translator/" />
+	<link rel="canonical" href="https://salif.github.io/morse-code-translator/" />
 	<meta property="og:title" content="Morse Code Translator" />
 	<link rel="stylesheet" href="./simple.min.css" />
 	<style>
@@ -57,6 +54,11 @@
 			margin-bottom: unset;
 		}
 
+		.disabled {
+			cursor: not-allowed;
+			background-color: var(--disabled);
+			color: var(--text-light)
+		}
 	</style>
 </head>
 
@@ -68,64 +70,210 @@
 			<td style="width: 100%;">
 				<div id="add_row_div" style="display: none;">
 					<label><b>dot:</b>&nbsp;<input type="text" id="inp_dot" />
-					</label>&nbsp;<label><b>dash:</b>&nbsp;<input type="text"
-							id="inp_dash" />
-					</label>&nbsp;<label><b>space:</b>&nbsp;<input type="text"
-							id="inp_space" value="/" />
-					</label>&nbsp;<label><b>sep:</b>&nbsp;<input type="text"
-							id="inp_sep" value=" " />
+					</label>&nbsp;<label><b>dash:</b>&nbsp;<input type="text" id="inp_dash" />
+					</label>&nbsp;<label><b>space:</b>&nbsp;<input type="text" id="inp_space" value="/"
+							class="disabled" />
+					</label>&nbsp;<label><b>separator:</b>&nbsp;<input type="text" id="inp_sep" value=" "
+							class="disabled" />
 					</label>
 				</div>
 				<input type="button" value="add row"
 					onclick="window.add_row(document.getElementById('inp_dot'),
                 document.getElementById('inp_dash'), document.getElementById('inp_space'), document.getElementById('inp_sep'));"
-					data-lo='{"type": 3, "en": "add row", "ru": "добавить строку", "bg": "добавяне на ред"}' />
-				&nbsp; <label><span
-						data-lo='{"type": 1, "en": "writing system:", "ru": "письмо:", "bg": "писменост:"}'>writing
+					data-lo='{"type": 3, "en": "add row", "ru": "добавить строку", "bg": "добавяне на ред"}' /> &nbsp;
+				<label><span data-lo='{"type": 1, "en": "writing system:", "ru": "письмо:", "bg": "писменост:"}'>writing
 						system:</span>
-					<select
-						onchange="window.set_lang(this.value || this.options[this.selectedIndex].value);">
-						<option value="1"
-							data-lo='{"type": 2, "en": "Latin", "ru": "Латиница", "bg": "Латиница"}'>
+					<select onchange="window.set_lang(this.value || this.options[this.selectedIndex].value);">
+						<option value="1" data-lo='{"type": 2, "en": "Latin", "ru": "Латиница", "bg": "Латиница"}'>
 							Latin</option>
 						<option value="4"
 							data-lo='{"type": 2, "en": "Latin Extended", "ru": "Латиница расширенная", "bg": "Разширена латиница"}'>
 							Latin Extended</option>
-						<option value="5"
-							data-lo='{"type": 2, "en": "Cyrillic", "ru": "Кириллица", "bg": "Кирилица"}'>
+						<option value="5" data-lo='{"type": 2, "en": "Cyrillic", "ru": "Кириллица", "bg": "Кирилица"}'>
 							Cyrillic</option>
-						<option value="6"
-							data-lo='{"type": 2, "en": "Greek", "ru": "Греческий", "bg": "Гръцка"}'>
-							Greek</option>
-						<option value="7"
-							data-lo='{"type": 2, "en": "Hebrew", "ru": "Еврейское", "bg": "Еврейска"}'>
+						<option value="6" data-lo='{"type": 2, "en": "Greek", "ru": "Греческий", "bg": "Гръцка"}'> Greek
+						</option>
+						<option value="7" data-lo='{"type": 2, "en": "Hebrew", "ru": "Еврейское", "bg": "Еврейска"}'>
 							Hebrew</option>
-						<option value="8"
-							data-lo='{"type": 2, "en": "Arabic", "ru": "Арабское", "bg": "Арабска"}'>
+						<option value="8" data-lo='{"type": 2, "en": "Arabic", "ru": "Арабское", "bg": "Арабска"}'>
 							Arabic</option>
-						<option value="9"
-							data-lo='{"type": 2, "en": "Persian", "ru": "Персидское", "bg": "Персийска"}'>
+						<option value="9" data-lo='{"type": 2, "en": "Persian", "ru": "Персидское", "bg": "Персийска"}'>
 							Persian</option>
-						<option value="10"
-							data-lo='{"type": 2, "en": "Japanese", "ru": "Японская", "bg": "Японска"}'>
+						<option value="10" data-lo='{"type": 2, "en": "Japanese", "ru": "Японская", "bg": "Японска"}'>
 							Japanese</option>
-						<option value="11"
-							data-lo='{"type": 2, "en": "Korean", "ru": "Корейский", "bg": "Корейска"}'>
+						<option value="11" data-lo='{"type": 2, "en": "Korean", "ru": "Корейский", "bg": "Корейска"}'>
 							Korean</option>
-						<option value="12"
-							data-lo='{"type": 2, "en": "Thai", "ru": "Тайское", "bg": "Тайска"}'>
-							Thai</option>
-					</select></label> &nbsp; <a class="button"
-					href="https://codeberg.org/salif/morse-code-translator"
+						<option value="12" data-lo='{"type": 2, "en": "Thai", "ru": "Тайское", "bg": "Тайска"}'> Thai
+						</option>
+					</select></label> &nbsp; <a class="button" href="https://codeberg.org/salif/morse-code-translator"
 					target="_blank"
 					data-lo='{"type": 1, "en": "source code", "ru": "исходный код", "bg": "програмен код"}'>source
 					code</a>
 			</td>
 		</tr>
 	</table>
-	<script type="module" src="./index.js?v=2024071502"></script>
-	<script data-goatcounter="https://sgi.goatcounter.com/count" async
-		src="//gc.zgo.at/count.js"></script>
+	<script type="module">
+		import * as morse_code from "./build/dev/javascript/morse_code_translator/morse_code_translator.mjs"
+		import * as option from "./build/dev/javascript/gleam_stdlib/gleam/option.mjs"
+
+		// button.onclick
+		function set_lang(mc_lang) {
+			window.mc_lang = mc_lang
+			oninp(window.inputs[0])
+		}
+
+		// button.onclick
+		function add_row(dot, dash, sp, sep) {
+			document.getElementById("add_row_div").style.display = "block";
+			if (dot.value.length == 0) { dot.focus(); return; }
+			if (dash.value.length == 0) { dash.focus(); return; }
+			if (sp.value.length == 0) { sp.focus(); return; }
+			if (sep.value.lenth == 0) { sep.focus(); return; }
+			main_table_add_row(oninp, {
+				str_dot: dot.value, str_dash: dash.value, str_sp: sp.value, str_sep: sep.value
+			})
+			dot.value = ""
+			dash.value = ""
+			sp.value = ""
+			sep.value = ""
+			document.getElementById("add_row_div").style.display = "none";
+		}
+
+		// textarea.oninput
+		function oninp(this_inp, skip_abc) {
+			// if abc textarea
+			if (this_inp.str_dot === "abc" && this_inp.str_dash === "") {
+				// first non abc textarea
+				const t_inp = window.inputs[0]
+				const result = morse_code.encode(this_inp.el.value, new morse_code.EncodeOptions(
+					new option.Some(t_inp.str_dot), new option.Some(t_inp.str_dash),
+					new option.Some(t_inp.str_sp), new option.Some(t_inp.str_sep),
+					new option.Some(false), new option.Some(window.mc_lang)),
+					window.characters_list)
+				// TODO: improve
+				if (result.isOk()) {
+					t_inp.el.value = result["0"]
+				} else {
+					window.inputs.forEach(inp => {
+						inp.el.value = result["0"].msg
+					})
+					return
+				}
+				// only convert
+				oninp(window.inputs[0], true)
+			} else {
+				// skip because abc is input
+				if (!skip_abc) {
+					window.input_abc.el.value = morse_code.decode_to_string(
+						this_inp.el.value, new morse_code.DecodeOptions(
+							new option.Some(this_inp.str_dot), new option.Some(this_inp.str_dash),
+							new option.Some(this_inp.str_sp), new option.Some(this_inp.str_sep),
+							new option.Some(false), new option.Some(window.mc_lang)),
+						window.characters_list)
+
+				}
+				window.inputs.forEach(inp => {
+					// skip input object
+					if (!(this_inp.str_dot === inp.str_dot && this_inp.str_dash === inp.str_dash &&
+						this_inp.str_sp === inp.str_sp && this_inp.str_sep === inp.str_sep)) {
+						inp.el.value = morse_code.convert_to_string(this_inp.el.value,
+							new morse_code.ConvertOptions(
+								this_inp.str_dot, inp.str_dot,
+								this_inp.str_dash, inp.str_dash,
+								this_inp.str_sp, inp.str_sp,
+								this_inp.str_sep, inp.str_sep))
+
+					}
+				})
+			}
+		}
+
+		function set_element_language(d, dlo, lang) {
+			try {
+				const dp = JSON.parse(dlo)
+				if (!dp.hasOwnProperty(lang)) {
+					lang = "en"
+				}
+				switch (dp.type) {
+					case 0: window.document.title = dp[lang]; break;
+					case 1: d.textContent = dp[lang]; break;
+					case 2: d.textContent = dp[lang]; break;
+					case 3: d.value = dp[lang]; break;
+					case 4: d.placeholder = dp[lang]; break;
+					default: console.warn(dp); break;
+				}
+			} catch (err) {
+				console.error(err)
+			}
+		}
+
+		function set_page_language(lang) {
+			if (lang === "") { return }
+			document.documentElement.lang = lang
+			document.querySelectorAll('[data-lo]').forEach(d => {
+				set_element_language(d, d.dataset.lo, lang)
+			})
+			set_element_language(null, '{"type": 0, "en": "Morse Code Translator", "ru": "Переводчик Азбуки Морзе", "bg": "Преводач на морзова азбука"}', lang)
+		}
+
+		function escapeHtml(unsafe) {
+			return unsafe.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll(
+				'>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;')
+		}
+
+		function main_table_add_row(fn_oninput, options) {
+			const new_row = window.main_table.insertRow(0)
+			const new_row_span = document.createElement("span")
+			new_row_span.textContent = options.str_dot + options.str_dash
+			new_row.insertCell(0).appendChild(new_row_span)
+			const new_cell = new_row.insertCell(1)
+			new_cell.style.width = "100%"
+			const el_text_area = document.createElement("textarea")
+			el_text_area.rows = "5"
+			el_text_area.style.width = "100%"
+			el_text_area.dataset.lo = '{"type": 4, "en": "enter code", "ru": "введите код", "bg": "въведете код"}'
+			options.el = el_text_area
+			el_text_area.oninput = function () {
+				fn_oninput(options)
+			}
+			new_cell.appendChild(el_text_area)
+			if (options.str_dot === "abc" || options.str_dash === "") {
+				new_row_span.dataset.lo = '{"type": 1, "en": "abc", "ru": "абв", "bg": "абв"}'
+				el_text_area.dataset.lo = '{"type": 4, "en": "enter text", "ru": "введите текст", "bg": "въведете текст"}'
+				window.input_abc = options
+			} else {
+				window.inputs.push(options)
+			}
+			set_element_language(el_text_area, el_text_area.dataset.lo, document.documentElement.lang)
+		}
+
+		function main() {
+			window.inputs = []
+			window.input_abc = {}
+			window.characters_list = new option.Some(morse_code.morse_code_list)
+			window.mc_lang = "1"
+			// html table
+			window.el_main_table = document.getElementById("main_table")
+			// used in html
+			window.set_lang = set_lang
+			window.add_row = add_row
+
+			main_table_add_row(oninp, { str_dot: "•", str_dash: "−", str_sp: "/", str_sep: " " })
+			main_table_add_row(oninp, { str_dot: ".", str_dash: "-", str_sp: "/", str_sep: " " })
+			main_table_add_row(oninp, { str_dot: "abc", str_dash: "", str_sp: "/", str_sep: " " })
+
+			window.set_page_language = set_page_language
+			switch (navigator.language || navigator.userLanguage) {
+				case "ru": set_page_language("ru"); break;
+				case "bg": set_page_language("bg"); break;
+			}
+
+			// focus first textarea
+			window.input_abc.el.focus()
+		}
+		main()
+
+	</script>
 </body>
 
 </html>

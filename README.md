@@ -5,19 +5,24 @@
 
 ## Links
 
-* [Homepage](https://salif.github.io/morse-code-translator/)
+* [Web tool](https://salif.github.io/morse-code-translator/)
 * [Source code](https://codeberg.org/salif/morse-code-translator)
 * [Discussions (Github)](https://github.com/salif/morse-code-translator/discussions)
 
-## Usage
+## Gleam library
+
+### Installation
 
 ```sh
-gleam add morse_code_translator
+gleam add morse_code_translator@2
 ```
+
+### Usage
 
 ```gleam
 import gleam/io
 import gleam/option.{None, Some}
+import gleam/result
 import morse_code_translator as mct
 
 pub fn main() {
@@ -28,7 +33,7 @@ pub fn main() {
          output_space: None,
          output_separator: None,
          is_uppercase: None,
-         language_num: None,
+         language: None,
       )
 
    let demo_decode_options =
@@ -38,23 +43,23 @@ pub fn main() {
          input_space: None,
          input_separator: None,
          to_uppercase: None,
-         language_num: None,
+         language: None,
       )
 
-   let demo_encode: Result(String, mct.MorseCodeError) =
-      mct.encode(" Test ", demo_encode_options, None)
-   io.debug(demo_encode)
-   // Ok("/ - . ... - /")
+   " Test "
+   |> mct.encode(demo_encode_options, None)
+   |> result.map(io.println)
+   // "/ - . ... - /"
 
-   let demo_decode: Result(String, mct.MorseCodeError) =
-      mct.decode("/ - . ... - /", demo_decode_options, None)
-   io.debug(demo_decode)
-   // Ok(" test ")
+   "/ - . ... - /"
+   |> mct.decode(demo_decode_options, None)
+   |> result.map(io.println)
+   // " test "
 
    "demo"
    |> mct.encode_to_string(demo_encode_options, None)
    |> mct.decode_to_string(demo_decode_options, None)
-   |> io.debug
+   |> io.println
    // "demo"
 
    "_.. . __ ___"
@@ -62,11 +67,11 @@ pub fn main() {
       mct.DecodeOptions(
          ..demo_decode_options,
          input_dash: Some("_"),
-         language_num: Some(mct.language_num_cyrillic),
+         language: Some(mct.language_cyrillic),
       ),
       None,
    )
-   |> io.debug
+   |> io.println
    // "демо"
 
    let demo_convert_options =
@@ -83,20 +88,39 @@ pub fn main() {
 
    "-.. . -- ---"
    |> mct.convert(demo_convert_options)
-   |> io.debug
-   // Ok("100 0 11 111")
+   |> result.map(io.println)
+   // "100 0 11 111"
 
    "="
    |> mct.convert_to_string(demo_convert_options)
-   |> io.debug
+   |> io.println
    // "Invalid morse code symbol: ="
 }
 ```
 
+### Version 2.2.0
+
+Version `2.2.0` contains backward incompatible changes.
+If you are using `EncodeOptions` and `DecodeOptions`, change `language_num` to `language`.
+
 Further documentation can be found at <https://hexdocs.pm/morse_code_translator>.
+
+## Web tool
+
+### Add new page language
+
+Open `index.html` and find all occurrences of `set_page_language`, `data-lo=` 
+and `dataset.lo =`, then add translations and send a pull request.
+
+### Manually set page language
+
+Use <a href="javascript:(function(){window.set_page_language(window.prompt('Enter language code')??'');})()">this bookmarklet</a>, save it as bookmark, then open it at the web page.
+
 
 ## Development
 
 ```sh
+# just format
 just build
+just serve
 ```

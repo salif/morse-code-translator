@@ -1,14 +1,13 @@
 name = "morse_code_translator"
-version = "2.1.0"
+version = "2.2.0"
 
 description = "Morse Code Translator"
 licences = ["MIT"]
 links = [
-  {title = "Website", href = "https://salif.github.io/morse-code-translator"},
+  {title = "Web tool", href = "https://salif.github.io/morse-code-translator/"},
   {title = "Github", href = "https://github.com/salif/morse-code-translator"},
 ]
 repository = {type = "codeberg", user = "salif", repo = "morse-code-translator"}
-target = "javascript"
 
 [dependencies]
 gleam_stdlib = ">= 0.39.0 and < 1.0.0"
