@@ -118,7 +118,7 @@
 
 		// button.onclick
 		function set_lang(mc_lang) {
-			window.mc_lang = mc_lang
+			window.mc_lang = new morse_code.Language(mc_lang)
 			oninp(window.inputs[0])
 		}
 
@@ -251,7 +251,7 @@
 			window.inputs = []
 			window.input_abc = {}
 			window.characters_list = new option.Some(morse_code.morse_code_list)
-			window.mc_lang = "1"
+			window.mc_lang = morse_code.language_latin
 			// html table
 			window.el_main_table = document.getElementById("main_table")
 			// used in html
