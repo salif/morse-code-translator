@@ -114,8 +114,11 @@ and `dataset.lo =`, then add translations and send a pull request.
 
 ### Manually set page language
 
-Use <a href="javascript:(function(){window.set_page_language(window.prompt('Enter language code')??'');})()">this bookmarklet</a>, save it as bookmark, then open it at the web page.
+Use this bookmarklet, save it as a bookmark, then open it while on the web page:
 
+```javascript
+javascript:(function(){window.set_page_language(window.prompt('Enter language code')??'');})()
+```
 
 ## Development
 
