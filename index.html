@@ -125,17 +125,17 @@
 		// button.onclick
 		function add_row(dot, dash, sp, sep) {
 			document.getElementById("add_row_div").style.display = "block";
-			if (dot.value.length == 0) { dot.focus(); return; }
-			if (dash.value.length == 0) { dash.focus(); return; }
-			if (sp.value.length == 0) { sp.focus(); return; }
-			if (sep.value.lenth == 0) { sep.focus(); return; }
+			if (dot.value.length === 0) { dot.focus(); return; }
+			if (dash.value.length === 0) { dash.focus(); return; }
+			if (sp.value.length === 0) { sp.focus(); return; }
+			if (sep.value.length === 0) { sep.focus(); return; }
 			main_table_add_row(oninp, {
 				str_dot: dot.value, str_dash: dash.value, str_sp: sp.value, str_sep: sep.value
 			})
 			dot.value = ""
 			dash.value = ""
-			sp.value = ""
-			sep.value = ""
+			sp.value = "/"
+			sep.value = " "
 			document.getElementById("add_row_div").style.display = "none";
 		}
 
