@@ -59,6 +59,8 @@ pub const language_korean = Language("11")
 /// Thai
 pub const language_thai = Language("12")
 
+pub const default_invalid_symbol = "#"
+
 pub type MorseCodeList =
    List(#(String, String, List(Bool)))
 
@@ -97,6 +99,8 @@ pub fn encode(
       option.unwrap(options.is_uppercase, default_is_uppercase)
    let opt_language: String =
       option.unwrap(options.language, default_language).num
+   let opt_morse_code_dict: MorseCodeList =
+      option.unwrap(morse_code_dict, morse_code_list)
 
    input
    |> string.to_graphemes
@@ -105,13 +109,7 @@ pub fn encode(
          " " | "\n" | "\r" | "\t" -> Ok(opt_output_space)
          _ -> {
             let g: String = if_(opt_is_uppercase, g, string.uppercase(g))
-            case
-               list_key_find(
-                  option.unwrap(morse_code_dict, morse_code_list),
-                  g,
-                  opt_language,
-               )
-            {
+            case list_key_find(opt_morse_code_dict, g, opt_language) {
                Ok(bools) -> {
                   bools
                   |> list.map(if_(_, opt_output_dash, opt_output_dot))
@@ -145,6 +143,7 @@ pub type DecodeOptions {
       input_separator: option.Option(String),
       to_uppercase: option.Option(Bool),
       language: option.Option(Language),
+      skip_invalid_symbols: option.Option(Bool),
    )
 }
 
@@ -163,6 +162,8 @@ pub fn decode(
       option.unwrap(options.to_uppercase, default_to_uppercase)
    let opt_language: String =
       option.unwrap(options.language, default_language).num
+   let opt_skip_invalid_symbols: Bool =
+      option.unwrap(options.skip_invalid_symbols, False)
 
    input
    |> string.split(opt_input_separator)
@@ -197,7 +198,11 @@ pub fn decode(
                         Ok(value),
                         Ok(string.lowercase(value)),
                      )
-                  Error(_) -> Error(MorseCodeError("Invalid symbol: " <> w))
+                  Error(_) ->
+                     case opt_skip_invalid_symbols {
+                        True -> Ok(default_invalid_symbol)
+                        False -> Error(MorseCodeError("Invalid symbol: " <> w))
+                     }
                }
             })
          }

@@ -23,7 +23,7 @@ format-js files:
 
 [private]
 build-ifn:
-	@if ! test -d build/dev/javascript/morse_code_translator; then just build; fi
+	@if ! test -d build/dev/javascript/morse_code_translator/morse_code_translator.mjs; then just build; fi
 
 serve port='8080': build-ifn
 	python3 -m http.server {{port}}

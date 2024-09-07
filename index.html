@@ -169,25 +169,34 @@
 			} else {
 				// skip because abc is input
 				if (!skip_abc) {
-					window.input_abc.el.value = morse_code.decode_to_string(
+					const result = morse_code.decode(
 						this_inp.el.value, new morse_code.DecodeOptions(
 							new option.Some(this_inp.str_dot), new option.Some(this_inp.str_dash),
 							new option.Some(this_inp.str_sp), new option.Some(this_inp.str_sep),
-							new option.Some(false), new option.Some(window.mc_lang)),
+							new option.Some(false), new option.Some(window.mc_lang), new option.Some(true)),
 						window.characters_list)
+					if (result.isOk()) {
+						window.input_abc.el.value = result["0"]
+					} else {
+						window.input_abc.el.value = result["0"].msg
+					}
 
 				}
 				window.inputs.forEach(inp => {
 					// skip input object
 					if (!(this_inp.str_dot === inp.str_dot && this_inp.str_dash === inp.str_dash &&
 						this_inp.str_sp === inp.str_sp && this_inp.str_sep === inp.str_sep)) {
-						inp.el.value = morse_code.convert_to_string(this_inp.el.value,
+						const result = morse_code.convert(this_inp.el.value,
 							new morse_code.ConvertOptions(
 								this_inp.str_dot, inp.str_dot,
 								this_inp.str_dash, inp.str_dash,
 								this_inp.str_sp, inp.str_sp,
 								this_inp.str_sep, inp.str_sep))
-
+						if (result.isOk()) {
+							inp.el.value = result["0"]
+						} else {
+							inp.el.value = result["0"].msg
+						}
 					}
 				})
 			}
