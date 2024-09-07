@@ -44,6 +44,7 @@ pub fn main() {
          input_separator: None,
          to_uppercase: None,
          language: None,
+         skip_invalid_symbols: None,
       )
 
    " Test "
