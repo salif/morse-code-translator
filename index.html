@@ -21,6 +21,7 @@
 		#main_table {
 			margin: auto;
 			max-width: 1024px;
+			display: none;
 		}
 
 		#main_table tr:nth-child(even) {
@@ -59,6 +60,10 @@
 			background-color: var(--disabled);
 			color: var(--text-light)
 		}
+
+		#add_row_div {
+			display: none;
+		}
 	</style>
 </head>
 
@@ -68,7 +73,7 @@
 		<tr>
 			<td><span></span></td>
 			<td style="width: 100%;">
-				<div id="add_row_div" style="display: none;">
+				<div id="add_row_div">
 					<label><b>dot:</b>&nbsp;<input type="text" id="inp_dot" />
 					</label>&nbsp;<label><b>dash:</b>&nbsp;<input type="text" id="inp_dash" />
 					</label>&nbsp;<label><b>space:</b>&nbsp;<input type="text" id="inp_space" value="/"
@@ -268,6 +273,7 @@
 				case "bg": set_page_language("bg"); break;
 			}
 
+			window.el_main_table.style.display = "table"
 			// focus first textarea
 			window.input_abc.el.focus()
 		}
