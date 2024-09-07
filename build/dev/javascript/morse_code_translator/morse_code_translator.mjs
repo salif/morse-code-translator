@@ -32,7 +32,7 @@ export class EncodeOptions extends $CustomType {
 }
 
 export class DecodeOptions extends $CustomType {
-  constructor(input_dot, input_dash, input_space, input_separator, to_uppercase, language) {
+  constructor(input_dot, input_dash, input_space, input_separator, to_uppercase, language, skip_invalid_symbols) {
     super();
     this.input_dot = input_dot;
     this.input_dash = input_dash;
@@ -40,6 +40,7 @@ export class DecodeOptions extends $CustomType {
     this.input_separator = input_separator;
     this.to_uppercase = to_uppercase;
     this.language = language;
+    this.skip_invalid_symbols = skip_invalid_symbols;
   }
 }
 
@@ -188,6 +189,7 @@ export function encode(input, options, morse_code_dict) {
     default_is_uppercase,
   );
   let opt_language = $option.unwrap(options.language, default_language).num;
+  let opt_morse_code_dict = $option.unwrap(morse_code_dict, morse_code_list);
   let _pipe = input;
   let _pipe$1 = $string.to_graphemes(_pipe);
   let _pipe$2 = $list.try_map(
@@ -203,11 +205,7 @@ export function encode(input, options, morse_code_dict) {
         return new Ok(opt_output_space);
       } else {
         let g$1 = if_(opt_is_uppercase, g, $string.uppercase(g));
-        let $ = list_key_find(
-          $option.unwrap(morse_code_dict, morse_code_list),
-          g$1,
-          opt_language,
-        );
+        let $ = list_key_find(opt_morse_code_dict, g$1, opt_language);
         if ($.isOk()) {
           let bools = $[0];
           let _pipe$2 = bools;
@@ -242,6 +240,30 @@ export function encode_to_string(input, options, morse_code_dict) {
   }
 }
 
+export const language_numbers = /* @__PURE__ */ new Language("2");
+
+export const language_punctuation = /* @__PURE__ */ new Language("3");
+
+export const language_latin_extended = /* @__PURE__ */ new Language("4");
+
+export const language_cyrillic = /* @__PURE__ */ new Language("5");
+
+export const language_greek = /* @__PURE__ */ new Language("6");
+
+export const language_hebrew = /* @__PURE__ */ new Language("7");
+
+export const language_arabic = /* @__PURE__ */ new Language("8");
+
+export const language_persian = /* @__PURE__ */ new Language("9");
+
+export const language_japanese = /* @__PURE__ */ new Language("10");
+
+export const language_korean = /* @__PURE__ */ new Language("11");
+
+export const language_thai = /* @__PURE__ */ new Language("12");
+
+export const default_invalid_symbol = "#";
+
 export function decode(input, options, morse_code_dict) {
   let opt_input_dot = $option.unwrap(options.input_dot, default_dot);
   let opt_input_dash = $option.unwrap(options.input_dash, default_dash);
@@ -255,6 +277,10 @@ export function decode(input, options, morse_code_dict) {
     default_to_uppercase,
   );
   let opt_language = $option.unwrap(options.language, default_language).num;
+  let opt_skip_invalid_symbols = $option.unwrap(
+    options.skip_invalid_symbols,
+    false,
+  );
   let _pipe = input;
   let _pipe$1 = $string.split(_pipe, opt_input_separator);
   let _pipe$2 = $list.try_map(
@@ -299,7 +325,11 @@ export function decode(input, options, morse_code_dict) {
                 new Ok($string.lowercase(value)),
               );
             } else {
-              return new Error(new MorseCodeError("Invalid symbol: " + w));
+              if (opt_skip_invalid_symbols) {
+                return new Ok(default_invalid_symbol);
+              } else {
+                return new Error(new MorseCodeError("Invalid symbol: " + w));
+              }
             }
           },
         );
@@ -322,25 +352,3 @@ export function decode_to_string(input, options, morse_code_dict) {
     return value.msg;
   }
 }
-
-export const language_numbers = /* @__PURE__ */ new Language("2");
-
-export const language_punctuation = /* @__PURE__ */ new Language("3");
-
-export const language_latin_extended = /* @__PURE__ */ new Language("4");
-
-export const language_cyrillic = /* @__PURE__ */ new Language("5");
-
-export const language_greek = /* @__PURE__ */ new Language("6");
-
-export const language_hebrew = /* @__PURE__ */ new Language("7");
-
-export const language_arabic = /* @__PURE__ */ new Language("8");
-
-export const language_persian = /* @__PURE__ */ new Language("9");
-
-export const language_japanese = /* @__PURE__ */ new Language("10");
-
-export const language_korean = /* @__PURE__ */ new Language("11");
-
-export const language_thai = /* @__PURE__ */ new Language("12");
