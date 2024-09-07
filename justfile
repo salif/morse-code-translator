@@ -21,19 +21,18 @@ format-js files:
 		}
 	})
 
-[private]
-build-ifn:
-	@if ! test -d build/dev/javascript/morse_code_translator/morse_code_translator.mjs; then just build; fi
-
-serve port='8080': build-ifn
+serve port='8080':
+	@if ! test -d build/dev/javascript/morse_code_translator/morse_code_translator.mjs; \
+		then just build; fi
 	python3 -m http.server {{port}}
 
 [confirm]
 gh-pages:
 	git switch gh-pages
 	git merge main --strategy-option theirs --no-commit
+	gleam clean
 	just build
 	git add ./build
-	git commit
+	git merge --continue
 	git push
 	git switch -
