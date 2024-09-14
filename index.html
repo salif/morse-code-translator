@@ -5,12 +5,22 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 	<title>Morse Code Translator</title>
+	<meta property="og:title" content="Morse Code Translator" />
+	<meta name="author" content="Salif Mehmed" />
+	<meta name="robots" content="index, follow" />
 	<meta name="description"
 		content="Morse Code encoder, decoder, converter for Latin, Cyrillic, Greek, Hebrew, Arabic, Persian, Japanese, Korean, Thai" />
-	<meta name="robots" content="index, follow" />
-	<meta name="author" content="Salif Mehmed" />
+	<meta property="og:description"
+		content="Morse Code encoder, decoder, converter for Latin, Cyrillic, Greek, Hebrew, Arabic, Persian, Japanese, Korean, Thai" />
 	<link rel="canonical" href="https://salif.github.io/morse-code-translator/" />
-	<meta property="og:title" content="Morse Code Translator" />
+	<meta property="og:url" content="https://salif.github.io/morse-code-translator/" />
+	<meta property="og:site_name" content="Morse Code Translator" />
+	<meta property="og:image" content="https://salif.github.io/morse-code-translator/icon.png" />
+	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta property="twitter:image" content="https://salif.github.io/morse-code-translator/icon.png" />
+	<meta property="twitter:title" content="Morse Code Translator" />
+	<link rel="icon" type="image/png" sizes="695x872" href="./icon.png" />
 	<link rel="stylesheet" href="./simple.min.css" />
 	<style>
 		body {
@@ -21,7 +31,6 @@
 		#main_table {
 			margin: auto;
 			max-width: 1024px;
-			display: none;
 		}
 
 		#main_table tr:nth-child(even) {
@@ -117,16 +126,7 @@
 			</td>
 		</tr>
 	</table>
-	<script type="module">
-		import * as morse_code from "./build/dev/javascript/morse_code_translator/morse_code_translator.mjs"
-		import * as option from "./build/dev/javascript/gleam_stdlib/gleam/option.mjs"
-
-		// button.onclick
-		function set_lang(mc_lang) {
-			window.mc_lang = new morse_code.Language(mc_lang)
-			oninp(window.inputs[0])
-		}
-
+	<script>
 		// button.onclick
 		function add_row(dot, dash, sp, sep) {
 			document.getElementById("add_row_div").style.display = "block";
@@ -134,7 +134,7 @@
 			if (dash.value.length === 0) { dash.focus(); return; }
 			if (sp.value.length === 0) { sp.focus(); return; }
 			if (sep.value.length === 0) { sep.focus(); return; }
-			main_table_add_row(oninp, {
+			main_table_add_row({
 				str_dot: dot.value, str_dash: dash.value, str_sp: sp.value, str_sep: sep.value
 			})
 			dot.value = ""
@@ -142,64 +142,6 @@
 			sp.value = "/"
 			sep.value = " "
 			document.getElementById("add_row_div").style.display = "none";
-		}
-
-		// textarea.oninput
-		function oninp(this_inp, skip_abc) {
-			// if abc textarea
-			if (this_inp.str_dot === "abc" && this_inp.str_dash === "") {
-				// first non abc textarea
-				const t_inp = window.inputs[0]
-				const result = morse_code.encode(this_inp.el.value, new morse_code.EncodeOptions(
-					new option.Some(t_inp.str_dot), new option.Some(t_inp.str_dash),
-					new option.Some(t_inp.str_sp), new option.Some(t_inp.str_sep),
-					new option.Some(false), new option.Some(window.mc_lang)),
-					window.characters_list)
-				// TODO: improve
-				if (result.isOk()) {
-					t_inp.el.value = result["0"]
-				} else {
-					window.inputs.forEach(inp => {
-						inp.el.value = result["0"].msg
-					})
-					return
-				}
-				// only convert
-				oninp(window.inputs[0], true)
-			} else {
-				// skip because abc is input
-				if (!skip_abc) {
-					const result = morse_code.decode(
-						this_inp.el.value, new morse_code.DecodeOptions(
-							new option.Some(this_inp.str_dot), new option.Some(this_inp.str_dash),
-							new option.Some(this_inp.str_sp), new option.Some(this_inp.str_sep),
-							new option.Some(false), new option.Some(window.mc_lang), new option.Some(true)),
-						window.characters_list)
-					if (result.isOk()) {
-						window.input_abc.el.value = result["0"]
-					} else {
-						window.input_abc.el.value = result["0"].msg
-					}
-
-				}
-				window.inputs.forEach(inp => {
-					// skip input object
-					if (!(this_inp.str_dot === inp.str_dot && this_inp.str_dash === inp.str_dash &&
-						this_inp.str_sp === inp.str_sp && this_inp.str_sep === inp.str_sep)) {
-						const result = morse_code.convert(this_inp.el.value,
-							new morse_code.ConvertOptions(
-								this_inp.str_dot, inp.str_dot,
-								this_inp.str_dash, inp.str_dash,
-								this_inp.str_sp, inp.str_sp,
-								this_inp.str_sep, inp.str_sep))
-						if (result.isOk()) {
-							inp.el.value = result["0"]
-						} else {
-							inp.el.value = result["0"].msg
-						}
-					}
-				})
-			}
 		}
 
 		function set_element_language(d, dlo, lang) {
@@ -235,7 +177,7 @@
 				'>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;')
 		}
 
-		function main_table_add_row(fn_oninput, options) {
+		function main_table_add_row(options) {
 			const new_row = window.main_table.insertRow(0)
 			const new_row_span = document.createElement("span")
 			new_row_span.textContent = options.str_dot + options.str_dash
@@ -248,7 +190,17 @@
 			el_text_area.dataset.lo = '{"type": 4, "en": "enter code", "ru": "введите код", "bg": "въведете код"}'
 			options.el = el_text_area
 			el_text_area.oninput = function () {
-				fn_oninput(options)
+				if (typeof window.oninp === "function") {
+					window.oninp(options)
+				} else {
+					// modules are not loaded yet
+					const old_value = this.value
+					window.setTimeout(function () {
+						if (old_value === el_text_area.value) {
+							window.oninp(options)
+						}
+					}, 1000)
+				}
 			}
 			new_cell.appendChild(el_text_area)
 			if (options.str_dot === "abc" || options.str_dash === "") {
@@ -264,30 +216,96 @@
 		function main() {
 			window.inputs = []
 			window.input_abc = {}
-			window.characters_list = new option.Some(morse_code.morse_code_list)
-			window.mc_lang = morse_code.language_latin
 			// html table
 			window.el_main_table = document.getElementById("main_table")
-			// used in html
-			window.set_lang = set_lang
 			window.add_row = add_row
 
-			main_table_add_row(oninp, { str_dot: "•", str_dash: "−", str_sp: "/", str_sep: " " })
-			main_table_add_row(oninp, { str_dot: ".", str_dash: "-", str_sp: "/", str_sep: " " })
-			main_table_add_row(oninp, { str_dot: "abc", str_dash: "", str_sp: "/", str_sep: " " })
+			main_table_add_row({ str_dot: "•", str_dash: "−", str_sp: "/", str_sep: " " })
+			main_table_add_row({ str_dot: ".", str_dash: "-", str_sp: "/", str_sep: " " })
+			main_table_add_row({ str_dot: "abc", str_dash: "", str_sp: "/", str_sep: " " })
 
 			window.set_page_language = set_page_language
 			switch (navigator.language || navigator.userLanguage) {
 				case "ru": set_page_language("ru"); break;
 				case "bg": set_page_language("bg"); break;
 			}
+		}
+		main()
+	</script>
+	<script type="module">
+		import * as morse_code from "./build/dev/javascript/morse_code_translator/morse_code_translator.mjs"
+		import * as option from "./build/dev/javascript/gleam_stdlib/gleam/option.mjs"
+		function main() {
+			window.characters_list = new option.Some(morse_code.morse_code_list)
+			window.mc_lang = morse_code.language_latin
 
-			window.el_main_table.style.display = "table"
+			// textarea.oninput
+			window.oninp = function (this_inp, skip_abc) {
+				// if abc textarea
+				if (this_inp.str_dot === "abc" && this_inp.str_dash === "") {
+					// first non abc textarea
+					const t_inp = window.inputs[0]
+					const result = morse_code.encode(this_inp.el.value, new morse_code.EncodeOptions(
+						new option.Some(t_inp.str_dot), new option.Some(t_inp.str_dash),
+						new option.Some(t_inp.str_sp), new option.Some(t_inp.str_sep),
+						new option.Some(false), new option.Some(window.mc_lang)),
+						window.characters_list)
+					// TODO: improve
+					if (result.isOk()) {
+						t_inp.el.value = result["0"]
+					} else {
+						window.inputs.forEach(inp => {
+							inp.el.value = result["0"].msg
+						})
+						return
+					}
+					// only convert
+					window.oninp(window.inputs[0], true)
+				} else {
+					// skip because abc is input
+					if (!skip_abc) {
+						const result = morse_code.decode(
+							this_inp.el.value, new morse_code.DecodeOptions(
+								new option.Some(this_inp.str_dot), new option.Some(this_inp.str_dash),
+								new option.Some(this_inp.str_sp), new option.Some(this_inp.str_sep),
+								new option.Some(false), new option.Some(window.mc_lang), new option.Some(true)),
+							window.characters_list)
+						if (result.isOk()) {
+							window.input_abc.el.value = result["0"]
+						} else {
+							window.input_abc.el.value = result["0"].msg
+						}
+
+					}
+					window.inputs.forEach(inp => {
+						// skip input object
+						if (!(this_inp.str_dot === inp.str_dot && this_inp.str_dash === inp.str_dash &&
+							this_inp.str_sp === inp.str_sp && this_inp.str_sep === inp.str_sep)) {
+							const result = morse_code.convert(this_inp.el.value,
+								new morse_code.ConvertOptions(
+									this_inp.str_dot, inp.str_dot,
+									this_inp.str_dash, inp.str_dash,
+									this_inp.str_sp, inp.str_sp,
+									this_inp.str_sep, inp.str_sep))
+							if (result.isOk()) {
+								inp.el.value = result["0"]
+							} else {
+								inp.el.value = result["0"].msg
+							}
+						}
+					})
+				}
+			}
+
+			// button.onclick
+			window.set_lang = function (mc_lang) {
+				window.mc_lang = new morse_code.Language(mc_lang)
+				window.oninp(window.inputs[0])
+			}
 			// focus first textarea
 			window.input_abc.el.focus()
 		}
 		main()
-
 	</script>
 	<script data-goatcounter="https://sgi.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
