@@ -31,6 +31,7 @@
 		#main_table {
 			margin: auto;
 			max-width: 1024px;
+			display: none;
 		}
 
 		#main_table tr:nth-child(even) {
@@ -229,6 +230,7 @@
 				case "ru": set_page_language("ru"); break;
 				case "bg": set_page_language("bg"); break;
 			}
+			window.el_main_table.style.display = "table"
 		}
 		main()
 	</script>
