@@ -123,10 +123,13 @@
 					</select></label> &nbsp; <a class="button" href="https://codeberg.org/salif/morse-code-translator"
 					target="_blank"
 					data-lo='{"type": 1, "en": "source code", "ru": "исходный код", "bg": "програмен код"}'>source
-					code</a>
+					code</a> &nbsp; <input type="button" value="comments"
+					onclick="window.load_comments(this, document.getElementById('comments_container'));"
+					data-lo='{"type": 3, "en": "comments", "ru": "комментарии", "bg": "коментари"}' />
 			</td>
 		</tr>
 	</table>
+	<section id="comments_container" style="display: none;"></section>
 	<script>
 		// button.onclick
 		function add_row(dot, dash, sp, sep) {
@@ -143,6 +146,19 @@
 			sp.value = "/"
 			sep.value = " "
 			document.getElementById("add_row_div").style.display = "none";
+		}
+
+		function load_comments(th, container) {
+			container.style.display = "block"
+			const el_thread = document.createElement("div")
+			el_thread.setAttribute("id", "disqus_thread")
+			el_thread.style.all = "initial"
+			const el_script = document.createElement('script')
+			el_script.setAttribute("src", "https://morse-code-translator.disqus.com/embed.js")
+			el_script.setAttribute("data-timestamp", +new Date());
+			container.appendChild(el_thread)
+			container.appendChild(el_script)
+			th.style.display = "none"
 		}
 
 		function set_element_language(d, dlo, lang) {
@@ -220,6 +236,11 @@
 			// html table
 			window.el_main_table = document.getElementById("main_table")
 			window.add_row = add_row
+			window.load_comments = load_comments
+			window.disqus_config = function () {
+				this.page.url = document.querySelector("link[rel='canonical']").getAttribute("href");
+				this.page.identifier = "/";
+			};
 
 			main_table_add_row({ str_dot: "•", str_dash: "−", str_sp: "/", str_sep: " " })
 			main_table_add_row({ str_dot: ".", str_dash: "-", str_sp: "/", str_sep: " " })
