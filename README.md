@@ -99,19 +99,14 @@ pub fn main() {
 }
 ```
 
+Further documentation can be found at <https://hexdocs.pm/morse_code_translator>.
+
 ### Version 2.2.0
 
 Version `2.2.0` contains backward incompatible changes.
 If you are using `EncodeOptions` and `DecodeOptions`, change `language_num` to `language`.
 
-Further documentation can be found at <https://hexdocs.pm/morse_code_translator>.
-
 ## Web tool
-
-### Add new page language
-
-Open `index.html` and find all occurrences of `set_page_language`, `data-lo=` 
-and `dataset.lo =`, then add translations and send a pull request.
 
 ### Manually set page language
 
@@ -120,6 +115,13 @@ Use this bookmarklet, save it as a bookmark, then open it while on the web page:
 ```javascript
 javascript:(function(){window.set_page_language(window.prompt('Enter language code')??'');})()
 ```
+
+### Contributing
+
+#### Add new page language
+
+Open `index.html` and find all occurrences of `set_page_language`, `data-lo=` 
+and `dataset.lo =`, then add translations and send a pull request.
 
 ## Development
 
