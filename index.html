@@ -43,29 +43,21 @@
 			padding: 0.1rem;
 		}
 
-		#main_table span {
-			font-weight: bold;
-			margin-right: 4px;
-		}
-
 		#main_table label {
 			display: unset;
 		}
 
-		#main_table input[type="text"] {
-			width: 32px;
-			display: inline-block;
+		#main_table .row label {
+			font-weight: bold;
+			margin-right: 4px;
 		}
 
-		#main_table select {
-			display: inline-block;
-		}
-
-		#main_table textarea {
+		#main_table .row textarea {
+			width: 100%;
 			margin-bottom: unset;
 		}
 
-		.disabled {
+		#add_row_div .disabled {
 			cursor: not-allowed;
 			background-color: var(--disabled);
 			color: var(--text-light)
@@ -73,6 +65,11 @@
 
 		#add_row_div {
 			display: none;
+		}
+
+		#add_row_div input {
+			width: 32px;
+			display: inline-block;
 		}
 	</style>
 </head>
@@ -96,31 +93,33 @@
 					onclick="window.add_row(document.getElementById('inp_dot'),
                 document.getElementById('inp_dash'), document.getElementById('inp_space'), document.getElementById('inp_sep'));"
 					data-lo='{"type": 3, "en": "add row", "ru": "добавить строку", "bg": "добавяне на ред"}' /> &nbsp;
-				<label><span data-lo='{"type": 1, "en": "writing system:", "ru": "письмо:", "bg": "писменост:"}'>writing
-						system:</span>
-					<select onchange="window.set_lang(this.value || this.options[this.selectedIndex].value);">
-						<option value="1" data-lo='{"type": 2, "en": "Latin", "ru": "Латиница", "bg": "Латиница"}'>
-							Latin</option>
-						<option value="4"
-							data-lo='{"type": 2, "en": "Latin Extended", "ru": "Латиница расширенная", "bg": "Разширена латиница"}'>
-							Latin Extended</option>
-						<option value="5" data-lo='{"type": 2, "en": "Cyrillic", "ru": "Кириллица", "bg": "Кирилица"}'>
-							Cyrillic</option>
-						<option value="6" data-lo='{"type": 2, "en": "Greek", "ru": "Греческий", "bg": "Гръцка"}'> Greek
-						</option>
-						<option value="7" data-lo='{"type": 2, "en": "Hebrew", "ru": "Еврейское", "bg": "Еврейска"}'>
-							Hebrew</option>
-						<option value="8" data-lo='{"type": 2, "en": "Arabic", "ru": "Арабское", "bg": "Арабска"}'>
-							Arabic</option>
-						<option value="9" data-lo='{"type": 2, "en": "Persian", "ru": "Персидское", "bg": "Персийска"}'>
-							Persian</option>
-						<option value="10" data-lo='{"type": 2, "en": "Japanese", "ru": "Японская", "bg": "Японска"}'>
-							Japanese</option>
-						<option value="11" data-lo='{"type": 2, "en": "Korean", "ru": "Корейский", "bg": "Корейска"}'>
-							Korean</option>
-						<option value="12" data-lo='{"type": 2, "en": "Thai", "ru": "Тайское", "bg": "Тайска"}'> Thai
-						</option>
-					</select></label> &nbsp; <a class="button" href="https://codeberg.org/salif/morse-code-translator"
+				<label for="select_writing_system"
+					data-lo='{"type": 1, "en": "writing system:", "ru": "письмо:", "bg": "писменост:"}'>writing
+					system:</label>
+				<select onchange="window.set_lang(this.value || this.options[this.selectedIndex].value);"
+					id="select_writing_system">
+					<option value="1" data-lo='{"type": 2, "en": "Latin", "ru": "Латиница", "bg": "Латиница"}'> Latin
+					</option>
+					<option value="4"
+						data-lo='{"type": 2, "en": "Latin Extended", "ru": "Латиница расширенная", "bg": "Разширена латиница"}'>
+						Latin Extended</option>
+					<option value="5" data-lo='{"type": 2, "en": "Cyrillic", "ru": "Кириллица", "bg": "Кирилица"}'>
+						Cyrillic</option>
+					<option value="6" data-lo='{"type": 2, "en": "Greek", "ru": "Греческий", "bg": "Гръцка"}'> Greek
+					</option>
+					<option value="7" data-lo='{"type": 2, "en": "Hebrew", "ru": "Еврейское", "bg": "Еврейска"}'> Hebrew
+					</option>
+					<option value="8" data-lo='{"type": 2, "en": "Arabic", "ru": "Арабское", "bg": "Арабска"}'> Arabic
+					</option>
+					<option value="9" data-lo='{"type": 2, "en": "Persian", "ru": "Персидское", "bg": "Персийска"}'>
+						Persian</option>
+					<option value="10" data-lo='{"type": 2, "en": "Japanese", "ru": "Японская", "bg": "Японска"}'>
+						Japanese</option>
+					<option value="11" data-lo='{"type": 2, "en": "Korean", "ru": "Корейский", "bg": "Корейска"}'>
+						Korean</option>
+					<option value="12" data-lo='{"type": 2, "en": "Thai", "ru": "Тайское", "bg": "Тайска"}'> Thai
+					</option>
+				</select> &nbsp; <a class="button" href="https://codeberg.org/salif/morse-code-translator"
 					target="_blank"
 					data-lo='{"type": 1, "en": "source code", "ru": "исходный код", "bg": "програмен код"}'>source
 					code</a> &nbsp; <input type="button" value="comments"
@@ -196,14 +195,17 @@
 
 		function main_table_add_row(options) {
 			const new_row = window.main_table.insertRow(0)
-			const new_row_span = document.createElement("span")
-			new_row_span.textContent = options.str_dot + options.str_dash
-			new_row.insertCell(0).appendChild(new_row_span)
+			new_row.classList.add("row")
+			const new_row_id = "enter_" + window.main_table.rows.length
+			const new_row_label = document.createElement("label")
+			new_row_label.textContent = options.str_dot + options.str_dash
+			new_row_label.htmlFor = new_row_id
+			new_row.insertCell(0).appendChild(new_row_label)
 			const new_cell = new_row.insertCell(1)
 			new_cell.style.width = "100%"
 			const el_text_area = document.createElement("textarea")
+			el_text_area.id = new_row_id
 			el_text_area.rows = "5"
-			el_text_area.style.width = "100%"
 			el_text_area.dataset.lo = '{"type": 4, "en": "enter code", "ru": "введите код", "bg": "въведете код"}'
 			options.el = el_text_area
 			el_text_area.oninput = function () {
@@ -221,7 +223,7 @@
 			}
 			new_cell.appendChild(el_text_area)
 			if (options.str_dot === "abc" || options.str_dash === "") {
-				new_row_span.dataset.lo = '{"type": 1, "en": "abc", "ru": "абв", "bg": "абв"}'
+				new_row_label.dataset.lo = '{"type": 1, "en": "abc", "ru": "абв", "bg": "абв"}'
 				el_text_area.dataset.lo = '{"type": 4, "en": "enter text", "ru": "введите текст", "bg": "въведете текст"}'
 				window.input_abc = options
 			} else {
@@ -254,6 +256,16 @@
 			window.el_main_table.style.display = "table"
 		}
 		main()
+
+		window.addEventListener("load", function () {
+			if (["localhost", "127.0.0.1", "0.0.0.0", "::1", ""].indexOf(
+				window.location.hostname) === -1) {
+				(function (c_, o_, u_, n_, t_, e_, r_) {
+					e_ = c_.createElement('script'), r_ = c_.getElementsByTagName(o_)[0]; e_.async = 1;
+					e_.setAttribute(n_, t_); e_.src = u_; r_.parentNode.insertBefore(e_, r_);
+				})(document, 'script', 'https://gc.zgo.at/count.js', 'data-goatcounter', 'https://sgi.goatcounter.com/count');
+			}
+		})
 	</script>
 	<script type="module">
 		import * as morse_code from "./build/dev/javascript/morse_code_translator/morse_code_translator.mjs"
@@ -330,7 +342,6 @@
 		}
 		main()
 	</script>
-	<script data-goatcounter="https://sgi.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 
 </html>
