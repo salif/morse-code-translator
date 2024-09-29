@@ -113,7 +113,7 @@ If you are using `EncodeOptions` and `DecodeOptions`, change `language_num` to `
 Use this bookmarklet, save it as a bookmark, then open it while on the web page:
 
 ```javascript
-javascript:(function(){window.set_page_language(window.prompt('Enter language code')??'');})()
+javascript:(function(){window.mct.set_page_language(window.prompt('Enter language code')??'');})()
 ```
 
 ### Contributing
