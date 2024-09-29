@@ -21,17 +21,16 @@
 	<meta property="twitter:image" content="https://salif.github.io/morse-code-translator/icon.png" />
 	<meta property="twitter:title" content="Morse Code Translator" />
 	<link rel="icon" type="image/png" sizes="695x872" href="./icon.png" />
-	<link rel="stylesheet" href="./simple.min.css" />
 	<style>
-		body {
-			margin: 0;
-			padding: 20px;
-		}
-
+		/* beautify ignore:start */
+		:root {color-scheme: light dark;} body {padding: 20px 10px;}
+		/* beautify ignore:end */
+	</style>
+	<link rel="stylesheet" href="https://unpkg.com/simpledotcss/simple.min.css" />
+	<style>
 		#main_table {
 			margin: auto;
 			max-width: 1024px;
-			display: none;
 		}
 
 		#main_table tr:nth-child(even) {
@@ -58,29 +57,32 @@
 		}
 
 		#add_row_div .disabled {
-			cursor: not-allowed;
 			background-color: var(--disabled);
 			color: var(--text-light)
-		}
-
-		#add_row_div {
-			display: none;
 		}
 
 		#add_row_div input {
 			width: 32px;
 			display: inline-block;
 		}
+
+		.d-none {
+			display: none;
+		}
+
+		.w-100 {
+			width: 100%;
+		}
 	</style>
 </head>
 
 <body>
 	<noscript><b>This page requires JavaScript to work properly.</b></noscript>
-	<table id="main_table">
+	<table id="main_table" class="d-none">
 		<tr>
 			<td><span></span></td>
-			<td style="width: 100%;">
-				<div id="add_row_div">
+			<td class="w-100">
+				<div id="add_row_div" class="d-none">
 					<label><b>dot:</b>&nbsp;<input type="text" id="inp_dot" />
 					</label>&nbsp;<label><b>dash:</b>&nbsp;<input type="text" id="inp_dash" />
 					</label>&nbsp;<label><b>space:</b>&nbsp;<input type="text" id="inp_space" value="/"
@@ -89,15 +91,12 @@
 							class="disabled" />
 					</label>
 				</div>
-				<input type="button" value="add row"
-					onclick="window.add_row(document.getElementById('inp_dot'),
-                document.getElementById('inp_dash'), document.getElementById('inp_space'), document.getElementById('inp_sep'));"
+				<input type="button" value="add row" id="add_row_button"
 					data-lo='{"type": 3, "en": "add row", "ru": "добавить строку", "bg": "добавяне на ред"}' /> &nbsp;
 				<label for="select_writing_system"
 					data-lo='{"type": 1, "en": "writing system:", "ru": "письмо:", "bg": "писменост:"}'>writing
 					system:</label>
-				<select onchange="window.set_lang(this.value || this.options[this.selectedIndex].value);"
-					id="select_writing_system">
+				<select id="select_writing_system">
 					<option value="1" data-lo='{"type": 2, "en": "Latin", "ru": "Латиница", "bg": "Латиница"}'> Latin
 					</option>
 					<option value="4"
@@ -119,46 +118,22 @@
 						Korean</option>
 					<option value="12" data-lo='{"type": 2, "en": "Thai", "ru": "Тайское", "bg": "Тайска"}'> Thai
 					</option>
-				</select> &nbsp; <a class="button" href="https://codeberg.org/salif/morse-code-translator"
-					target="_blank"
-					data-lo='{"type": 1, "en": "source code", "ru": "исходный код", "bg": "програмен код"}'>source
-					code</a> &nbsp; <input type="button" value="comments"
-					onclick="window.load_comments(this, document.getElementById('comments_container'));"
+				</select> &nbsp; <input type="button" value="info"
+					onclick="document.getElementById('info_div').classList.toggle('d-none');"
+					data-lo='{"type": 3, "en": "info", "ru": "информация", "bg": "инфо"}'> &nbsp; <input type="button"
+					value="comments" id="load_comments_button"
 					data-lo='{"type": 3, "en": "comments", "ru": "комментарии", "bg": "коментари"}' />
+				<div id="info_div" class="notice d-none">
+					<a href="https://codeberg.org/salif/morse-code-translator" target="_blank"
+						data-lo='{"type": 1, "en": "source code", "ru": "исходный код", "bg": "програмен код"}'>source
+						code</a>
+				</div>
 			</td>
 		</tr>
 	</table>
-	<section id="comments_container" style="display: none;"></section>
+	<section id="comments_container" class="d-none"></section>
 	<script>
-		// button.onclick
-		function add_row(dot, dash, sp, sep) {
-			document.getElementById("add_row_div").style.display = "block";
-			if (dot.value.length === 0) { dot.focus(); return; }
-			if (dash.value.length === 0) { dash.focus(); return; }
-			if (sp.value.length === 0) { sp.focus(); return; }
-			if (sep.value.length === 0) { sep.focus(); return; }
-			main_table_add_row({
-				str_dot: dot.value, str_dash: dash.value, str_sp: sp.value, str_sep: sep.value
-			})
-			dot.value = ""
-			dash.value = ""
-			sp.value = "/"
-			sep.value = " "
-			document.getElementById("add_row_div").style.display = "none";
-		}
-
-		function load_comments(th, container) {
-			container.style.display = "block"
-			const el_thread = document.createElement("div")
-			el_thread.setAttribute("id", "disqus_thread")
-			el_thread.style.all = "initial"
-			const el_script = document.createElement('script')
-			el_script.setAttribute("src", "https://morse-code-translator.disqus.com/embed.js")
-			el_script.setAttribute("data-timestamp", +new Date());
-			container.appendChild(el_thread)
-			container.appendChild(el_script)
-			th.style.display = "none"
-		}
+		window.mct = {}
 
 		function set_element_language(d, dlo, lang) {
 			try {
@@ -179,7 +154,7 @@
 			}
 		}
 
-		function set_page_language(lang) {
+		window.mct.set_page_language = function (lang) {
 			if (lang === "") { return }
 			document.documentElement.lang = lang
 			document.querySelectorAll('[data-lo]').forEach(d => {
@@ -188,35 +163,30 @@
 			set_element_language(null, '{"type": 0, "en": "Morse Code Translator", "ru": "Переводчик Азбуки Морзе", "bg": "Преводач на морзова азбука"}', lang)
 		}
 
-		function escapeHtml(unsafe) {
-			return unsafe.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll(
-				'>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;')
-		}
-
-		function main_table_add_row(options) {
-			const new_row = window.main_table.insertRow(0)
+		function main_table_add_row(main_table, options) {
+			const new_row = main_table.insertRow(0)
 			new_row.classList.add("row")
-			const new_row_id = "enter_" + window.main_table.rows.length
+			const new_row_id = "enter_" + main_table.rows.length
 			const new_row_label = document.createElement("label")
 			new_row_label.textContent = options.str_dot + options.str_dash
 			new_row_label.htmlFor = new_row_id
 			new_row.insertCell(0).appendChild(new_row_label)
 			const new_cell = new_row.insertCell(1)
-			new_cell.style.width = "100%"
+			new_cell.classList.add("w-100")
 			const el_text_area = document.createElement("textarea")
 			el_text_area.id = new_row_id
 			el_text_area.rows = "5"
 			el_text_area.dataset.lo = '{"type": 4, "en": "enter code", "ru": "введите код", "bg": "въведете код"}'
 			options.el = el_text_area
 			el_text_area.oninput = function () {
-				if (typeof window.oninp === "function") {
-					window.oninp(options)
+				if (typeof window.mct.oninp === "function") {
+					window.mct.oninp(options)
 				} else {
 					// modules are not loaded yet
 					const old_value = this.value
 					window.setTimeout(function () {
 						if (old_value === el_text_area.value) {
-							window.oninp(options)
+							window.mct.oninp(options)
 						}
 					}, 1000)
 				}
@@ -225,122 +195,171 @@
 			if (options.str_dot === "abc" || options.str_dash === "") {
 				new_row_label.dataset.lo = '{"type": 1, "en": "abc", "ru": "абв", "bg": "абв"}'
 				el_text_area.dataset.lo = '{"type": 4, "en": "enter text", "ru": "введите текст", "bg": "въведете текст"}'
-				window.input_abc = options
+				window.mct.input_abc = options
 			} else {
-				window.inputs.push(options)
+				window.mct.inputs.push(options)
 			}
 			set_element_language(el_text_area, el_text_area.dataset.lo, document.documentElement.lang)
 		}
 
-		function main() {
-			window.inputs = []
-			window.input_abc = {}
-			// html table
-			window.el_main_table = document.getElementById("main_table")
-			window.add_row = add_row
-			window.load_comments = load_comments
-			window.disqus_config = function () {
-				this.page.url = document.querySelector("link[rel='canonical']").getAttribute("href");
-				this.page.identifier = "/";
-			};
+		window.mct.inputs = []
+		window.mct.input_abc = {}
 
-			main_table_add_row({ str_dot: "•", str_dash: "−", str_sp: "/", str_sep: " " })
-			main_table_add_row({ str_dot: ".", str_dash: "-", str_sp: "/", str_sep: " " })
-			main_table_add_row({ str_dot: "abc", str_dash: "", str_sp: "/", str_sep: " " })
+		window.disqus_config = function () {
+			this.page.url = document.querySelector("link[rel='canonical']").getAttribute("href");
+			this.page.identifier = "/";
+		};
 
-			window.set_page_language = set_page_language
-			switch (navigator.language || navigator.userLanguage) {
-				case "ru": set_page_language("ru"); break;
-				case "bg": set_page_language("bg"); break;
-			}
-			window.el_main_table.style.display = "table"
+		const el_main_table = document.getElementById("main_table")
+		main_table_add_row(el_main_table, { str_dot: "•", str_dash: "−", str_sp: "/", str_sep: " " })
+		main_table_add_row(el_main_table, { str_dot: ".", str_dash: "-", str_sp: "/", str_sep: " " })
+		main_table_add_row(el_main_table, { str_dot: "abc", str_dash: "", str_sp: "/", str_sep: " " })
+
+		switch (navigator.language || navigator.userLanguage) {
+			case "ru": window.mct.set_page_language("ru"); break;
+			case "bg": window.mct.set_page_language("bg"); break;
 		}
-		main()
+		el_main_table.classList.remove("d-none")
 
-		window.addEventListener("load", function () {
-			if (["localhost", "127.0.0.1", "0.0.0.0", "::1", ""].indexOf(
-				window.location.hostname) === -1) {
+		function add_row(main_table, add_row_div, dot, dash, sp, sep) {
+			add_row_div.classList.remove("d-none")
+			if (dot.value.length === 0) { dot.focus(); return; }
+			if (dash.value.length === 0) { dash.focus(); return; }
+			if (sp.value.length === 0) { sp.focus(); return; }
+			if (sep.value.length === 0) { sep.focus(); return; }
+			main_table_add_row(main_table, {
+				str_dot: dot.value, str_dash: dash.value, str_sp: sp.value, str_sep: sep.value
+			})
+			dot.value = ""
+			dash.value = ""
+			sp.value = "/"
+			sep.value = " "
+			add_row_div.classList.add("d-none")
+		}
+
+		document.getElementById("add_row_button").addEventListener("click", function () {
+			add_row(
+				document.getElementById('main_table'), document.getElementById('add_row_div'),
+				document.getElementById('inp_dot'), document.getElementById('inp_dash'),
+				document.getElementById('inp_space'), document.getElementById('inp_sep')
+			)
+		})
+
+		document.getElementById("select_writing_system").addEventListener("change", function () {
+			window.mct.set_lang(this.value || this.options[this.selectedIndex].value)
+		})
+
+		document.getElementById("load_comments_button").addEventListener("click", function () {
+			const container = document.getElementById('comments_container');
+			container.classList.remove("d-none")
+			const el_thread = document.createElement("div")
+			el_thread.setAttribute("id", "disqus_thread")
+			el_thread.style.all = "initial"
+			const el_script = document.createElement('script')
+			el_script.setAttribute("src", "https://morse-code-translator.disqus.com/embed.js")
+			el_script.setAttribute("data-timestamp", +new Date());
+			container.appendChild(el_thread)
+			container.appendChild(el_script)
+			this.classList.add("d-none")
+			window.mct.scroll_to(el_thread)
+		})
+
+		window.mct.scroll_to = function (el) {
+			const dom_rect = el.getBoundingClientRect()
+			const num_view_height = Math.max(document.documentElement.clientHeight, window.innerHeight)
+			const is_not_visible = dom_rect.bottom < 0 || dom_rect.top - num_view_height >= 0
+			if (is_not_visible) {
+				el.scrollIntoView(true)
+			}
+		}
+
+		// not used
+		function escapeHtml(unsafe) {
+			return unsafe.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll(
+				'>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;')
+		}
+
+		if (window.location.hostname === "salif.github.io") {
+			window.addEventListener("load", function () {
 				(function (c_, o_, u_, n_, t_, e_, r_) {
 					e_ = c_.createElement('script'), r_ = c_.getElementsByTagName(o_)[0]; e_.async = 1;
 					e_.setAttribute(n_, t_); e_.src = u_; r_.parentNode.insertBefore(e_, r_);
 				})(document, 'script', 'https://gc.zgo.at/count.js', 'data-goatcounter', 'https://sgi.goatcounter.com/count');
-			}
-		})
+			})
+		}
 	</script>
 	<script type="module">
 		import * as morse_code from "./build/dev/javascript/morse_code_translator/morse_code_translator.mjs"
 		import * as option from "./build/dev/javascript/gleam_stdlib/gleam/option.mjs"
-		function main() {
-			window.characters_list = new option.Some(morse_code.morse_code_list)
-			window.mc_lang = morse_code.language_latin
 
-			// textarea.oninput
-			window.oninp = function (this_inp, skip_abc) {
-				// if abc textarea
-				if (this_inp.str_dot === "abc" && this_inp.str_dash === "") {
-					// first non abc textarea
-					const t_inp = window.inputs[0]
-					const result = morse_code.encode(this_inp.el.value, new morse_code.EncodeOptions(
-						new option.Some(t_inp.str_dot), new option.Some(t_inp.str_dash),
-						new option.Some(t_inp.str_sp), new option.Some(t_inp.str_sep),
-						new option.Some(false), new option.Some(window.mc_lang)),
-						window.characters_list)
-					// TODO: improve
-					if (result.isOk()) {
-						t_inp.el.value = result["0"]
-					} else {
-						window.inputs.forEach(inp => {
-							inp.el.value = result["0"].msg
-						})
-						return
-					}
-					// only convert
-					window.oninp(window.inputs[0], true)
+		window.mct.characters_list = new option.Some(morse_code.morse_code_list)
+		window.mct.mc_lang = morse_code.language_latin
+
+		// textarea.oninput
+		window.mct.oninp = function (this_inp, skip_abc) {
+			// if abc textarea
+			if (this_inp.str_dot === "abc" && this_inp.str_dash === "") {
+				// first non abc textarea
+				const t_inp = window.mct.inputs[0]
+				const result = morse_code.encode(this_inp.el.value, new morse_code.EncodeOptions(
+					new option.Some(t_inp.str_dot), new option.Some(t_inp.str_dash),
+					new option.Some(t_inp.str_sp), new option.Some(t_inp.str_sep),
+					new option.Some(false), new option.Some(window.mct.mc_lang)),
+					window.mct.characters_list)
+				// TODO: improve
+				if (result.isOk()) {
+					t_inp.el.value = result["0"]
 				} else {
-					// skip because abc is input
-					if (!skip_abc) {
-						const result = morse_code.decode(
-							this_inp.el.value, new morse_code.DecodeOptions(
-								new option.Some(this_inp.str_dot), new option.Some(this_inp.str_dash),
-								new option.Some(this_inp.str_sp), new option.Some(this_inp.str_sep),
-								new option.Some(false), new option.Some(window.mc_lang), new option.Some(true)),
-							window.characters_list)
-						if (result.isOk()) {
-							window.input_abc.el.value = result["0"]
-						} else {
-							window.input_abc.el.value = result["0"].msg
-						}
-
-					}
-					window.inputs.forEach(inp => {
-						// skip input object
-						if (!(this_inp.str_dot === inp.str_dot && this_inp.str_dash === inp.str_dash &&
-							this_inp.str_sp === inp.str_sp && this_inp.str_sep === inp.str_sep)) {
-							const result = morse_code.convert(this_inp.el.value,
-								new morse_code.ConvertOptions(
-									this_inp.str_dot, inp.str_dot,
-									this_inp.str_dash, inp.str_dash,
-									this_inp.str_sp, inp.str_sp,
-									this_inp.str_sep, inp.str_sep))
-							if (result.isOk()) {
-								inp.el.value = result["0"]
-							} else {
-								inp.el.value = result["0"].msg
-							}
-						}
+					window.mct.inputs.forEach(inp => {
+						inp.el.value = result["0"].msg
 					})
+					return
 				}
+				// only convert
+				window.mct.oninp(window.mct.inputs[0], true)
+			} else {
+				// skip because abc is input
+				if (!skip_abc) {
+					const result = morse_code.decode(
+						this_inp.el.value, new morse_code.DecodeOptions(
+							new option.Some(this_inp.str_dot), new option.Some(this_inp.str_dash),
+							new option.Some(this_inp.str_sp), new option.Some(this_inp.str_sep),
+							new option.Some(false), new option.Some(window.mct.mc_lang), new option.Some(true)),
+						window.mct.characters_list)
+					if (result.isOk()) {
+						window.mct.input_abc.el.value = result["0"]
+					} else {
+						window.mct.input_abc.el.value = result["0"].msg
+					}
+				}
+				window.mct.inputs.forEach(inp => {
+					// skip input object
+					if (!(this_inp.str_dot === inp.str_dot && this_inp.str_dash === inp.str_dash &&
+						this_inp.str_sp === inp.str_sp && this_inp.str_sep === inp.str_sep)) {
+						const result = morse_code.convert(this_inp.el.value,
+							new morse_code.ConvertOptions(
+								this_inp.str_dot, inp.str_dot,
+								this_inp.str_dash, inp.str_dash,
+								this_inp.str_sp, inp.str_sp,
+								this_inp.str_sep, inp.str_sep))
+						if (result.isOk()) {
+							inp.el.value = result["0"]
+						} else {
+							inp.el.value = result["0"].msg
+						}
+					}
+				})
 			}
-
-			// button.onclick
-			window.set_lang = function (mc_lang) {
-				window.mc_lang = new morse_code.Language(mc_lang)
-				window.oninp(window.inputs[0])
-			}
-			// focus first textarea
-			window.input_abc.el.focus()
 		}
-		main()
+
+		// button.onclick
+		window.mct.set_lang = function (mc_lang) {
+			window.mct.mc_lang = new morse_code.Language(mc_lang)
+			window.mct.oninp(window.mct.inputs[0])
+		}
+
+		// focus first textarea
+		window.mct.input_abc.el.focus()
 	</script>
 </body>
 
