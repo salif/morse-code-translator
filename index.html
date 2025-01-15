@@ -92,39 +92,39 @@
 					</label>
 				</div>
 				<input type="button" value="add row" id="btn_add_row"
-					data-lo='{"type": 3, "en": "add row", "ru": "добавить строку", "bg": "добавяне на ред"}' /> &nbsp;
+					data-lo='{"type": 3, "en": "add row", "ru": "добавить строку", "bg": "добавяне на ред", "ko": "행 추가"}' /> &nbsp;
 				<label for="select_writing_system"
-					data-lo='{"type": 1, "en": "writing system:", "ru": "письмо:", "bg": "писменост:"}'>writing
+					data-lo='{"type": 1, "en": "writing system:", "ru": "письмо:", "bg": "писменост:", "ko": "문자 체계:"}'>writing
 					system:</label>
 				<select id="select_writing_system">
-					<option value="1" data-lo='{"type": 2, "en": "Latin", "ru": "Латиница", "bg": "Латиница"}'> Latin
+					<option value="1" data-lo='{"type": 2, "en": "Latin", "ru": "Латиница", "bg": "Латиница", "ko": "로마자"}'> Latin
 					</option>
 					<option value="4"
-						data-lo='{"type": 2, "en": "Latin Extended", "ru": "Латиница расширенная", "bg": "Разширена латиница"}'>
+						data-lo='{"type": 2, "en": "Latin Extended", "ru": "Латиница расширенная", "bg": "Разширена латиница", "ko": "확장된 라틴어"}'>
 						Latin Extended</option>
-					<option value="5" data-lo='{"type": 2, "en": "Cyrillic", "ru": "Кириллица", "bg": "Кирилица"}'>
+					<option value="5" data-lo='{"type": 2, "en": "Cyrillic", "ru": "Кириллица", "bg": "Кирилица", "ko": "키릴 문자"}'>
 						Cyrillic</option>
-					<option value="6" data-lo='{"type": 2, "en": "Greek", "ru": "Греческий", "bg": "Гръцка"}'> Greek
+					<option value="6" data-lo='{"type": 2, "en": "Greek", "ru": "Греческий", "bg": "Гръцка", "ko": "그리스 문자"}'> Greek
 					</option>
-					<option value="7" data-lo='{"type": 2, "en": "Hebrew", "ru": "Еврейское", "bg": "Еврейска"}'> Hebrew
+					<option value="7" data-lo='{"type": 2, "en": "Hebrew", "ru": "Еврейское", "bg": "Еврейска", "ko": "히브리 문자"}'> Hebrew
 					</option>
-					<option value="8" data-lo='{"type": 2, "en": "Arabic", "ru": "Арабское", "bg": "Арабска"}'> Arabic
+					<option value="8" data-lo='{"type": 2, "en": "Arabic", "ru": "Арабское", "bg": "Арабска", "ko": "아랍 문자"}'> Arabic
 					</option>
-					<option value="9" data-lo='{"type": 2, "en": "Persian", "ru": "Персидское", "bg": "Персийска"}'>
+					<option value="9" data-lo='{"type": 2, "en": "Persian", "ru": "Персидское", "bg": "Персийска", "ko": "페르시아어"}'>
 						Persian</option>
-					<option value="10" data-lo='{"type": 2, "en": "Japanese", "ru": "Японская", "bg": "Японска"}'>
+					<option value="10" data-lo='{"type": 2, "en": "Japanese", "ru": "Японская", "bg": "Японска", "ko": "일본어"}'>
 						Japanese</option>
-					<option value="11" data-lo='{"type": 2, "en": "Korean", "ru": "Корейский", "bg": "Корейска"}'>
+					<option value="11" data-lo='{"type": 2, "en": "Korean", "ru": "Корейский", "bg": "Корейска", "ko": "한글"}'>
 						Korean</option>
-					<option value="12" data-lo='{"type": 2, "en": "Thai", "ru": "Тайское", "bg": "Тайска"}'> Thai
+					<option value="12" data-lo='{"type": 2, "en": "Thai", "ru": "Тайское", "bg": "Тайска", "ko": "태국 문자"}'> Thai
 					</option>
 				</select> &nbsp; <input type="button" value="info" id="btn_info"
-					data-lo='{"type": 3, "en": "info", "ru": "информация", "bg": "инфо"}'> &nbsp; <input type="button"
+					data-lo='{"type": 3, "en": "info", "ru": "информация", "bg": "инфо", "ko": "정보"}'> &nbsp; <input type="button"
 					value="comments" id="btn_comments"
-					data-lo='{"type": 3, "en": "comments", "ru": "комментарии", "bg": "коментари"}' />
+					data-lo='{"type": 3, "en": "comments", "ru": "комментарии", "bg": "коментари", "ko": "댓글"}' />
 				<div id="info_div" class="notice d-none">
 					<a href="https://codeberg.org/salif/morse-code-translator" target="_blank"
-						data-lo='{"type": 1, "en": "source code", "ru": "исходный код", "bg": "програмен код"}'>source
+						data-lo='{"type": 1, "en": "source code", "ru": "исходный код", "bg": "програмен код", "ko": "소스 코드"}'>source
 						code</a>
 				</div>
 			</td>
@@ -161,7 +161,7 @@
 				document.querySelectorAll("[data-lo]").forEach(d => {
 					set_element_language(d, d.dataset.lo, lang)
 				})
-				set_element_language(null, '{"type": 0, "en": "Morse Code Translator", "ru": "Переводчик Азбуки Морзе", "bg": "Преводач на морзова азбука"}', lang)
+				set_element_language(null, '{"type": 0, "en": "Morse Code Translator", "ru": "Переводчик Азбуки Морзе", "bg": "Преводач на морзова азбука", "ko": "모스 부호 번역기"}', lang)
 			}
 
 			function main_table_add_row(main_table, options) {
@@ -177,7 +177,7 @@
 				const el_text_area = document.createElement("textarea")
 				el_text_area.id = new_row_id
 				el_text_area.rows = "5"
-				el_text_area.dataset.lo = '{"type": 4, "en": "enter code", "ru": "введите код", "bg": "въведете код"}'
+				el_text_area.dataset.lo = '{"type": 4, "en": "enter code", "ru": "введите код", "bg": "въведете код", "ko": "코드를 입력하세요"}'
 				options.el = el_text_area
 				el_text_area.oninput = function () {
 					if (typeof window.mct.oninp === "function") {
@@ -194,8 +194,8 @@
 				}
 				new_cell.appendChild(el_text_area)
 				if (options.str_dot === "abc" || options.str_dash === "") {
-					new_row_label.dataset.lo = '{"type": 1, "en": "abc", "ru": "абв", "bg": "абв"}'
-					el_text_area.dataset.lo = '{"type": 4, "en": "enter text", "ru": "введите текст", "bg": "въведете текст"}'
+					new_row_label.dataset.lo = '{"type": 1, "en": "abc", "ru": "абв", "bg": "абв", "ko": "텍스트"}'
+					el_text_area.dataset.lo = '{"type": 4, "en": "enter text", "ru": "введите текст", "bg": "въведете текст", "ko": "텍스트를 입력하세요"}'
 					window.mct.input_abc = options
 				} else {
 					window.mct.inputs.push(options)
@@ -216,9 +216,10 @@
 			main_table_add_row(el_main_table, { str_dot: ".", str_dash: "-", str_sp: "/", str_sep: " " })
 			main_table_add_row(el_main_table, { str_dot: "abc", str_dash: "", str_sp: "/", str_sep: " " })
 
-			switch (navigator.language || navigator.userLanguage) {
+			switch ((navigator.language || navigator.userLanguage || "").split("-")[0]) {
 				case "ru": window.mct.set_page_language("ru"); break;
 				case "bg": window.mct.set_page_language("bg"); break;
+				case "ko": window.mct.set_page_language("ko"); break;
 			}
 			el_main_table.classList.remove("d-none")
 
